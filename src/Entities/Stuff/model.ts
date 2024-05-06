@@ -9,21 +9,30 @@ export class Stuff implements Istuff {
     getStuff(): Icard[] {
         return this.stuff
     }
-    getCard(n0: number): Icard {
-        // Вероятнее всего не будет ситуации, при которой будет искаться несуществующая карта
-        return this.stuff.find((card:Icard) => card.getNominal() === n0) as Icard
+    getCard(nO: number): Icard|undefined {     
+        // !!! Только для тестирования
+        return this.stuff.find((card:Icard) => card.getNominal() === nO)
     }
     getUpCard():Icard{
+         // Вероятнее всего не будет ситуации, при которой будет искаться несуществующая карта
         return this.stuff[this.stuff.length - 1]
     }
-    discard(n0: number): Istuff {
-        throw new Error("Method not implemented.");
+    discard(nO: number): Istuff {
+        if(this.isCardAvailable()){
+            this.stuff = this.stuff.filter(card => card.getNominal() !== nO)
+        }
+        return this
     }
     discardUp():Istuff {
-        this.stuff.pop()
+        if (this.isCardAvailable()){
+            this.stuff.pop()
+        }
         return this
     }
     getCountOfCard(): number {
         return this.stuff.length
+    }
+    private isCardAvailable(){
+        return this.getCountOfCard() > 0
     }
 }
