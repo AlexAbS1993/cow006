@@ -5,6 +5,6 @@ export interface Istuff {
     // getCard(n0: number): Icard
     discard(n0: number): Istuff
     getCountOfCard(): number
-    getUpCard():Icard
+    getUpCard():Icard|null
     discardUp():Istuff
 }
