@@ -22,7 +22,7 @@ describe("Player is a important part of the game. It has hand, info and gameInfo
             looses: 0
         }
     }
-    const player = new Player(playersInfo)
+    const player = new Player(playersInfo, "aa_33")
     test("Player have a hand", () => {
         expect(player.getHand()).toBeDefined()
     })
