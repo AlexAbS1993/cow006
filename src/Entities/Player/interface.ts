@@ -22,6 +22,7 @@ export interface Iplayer {
     getInfo(): playerInfoType
     changeInfo(newInfo: playerInfoType): procedureReportType<Iplayer>
     // setStatistic(): Promise<procedureReportType<Iplayer>>
+    getId(): string
     getHand(): Ihand
     takeHand(hand:Ihand): procedureReportType<Iplayer>
     cardsCount():number

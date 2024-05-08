@@ -8,8 +8,13 @@ import { Iplayer, playerInfoType } from "./interface";
 export class Player implements Iplayer {
     private info: playerInfoType
     private hand: Ihand = new Hand(10)
-    constructor(playersInfo: playerInfoType){
+    private id: string
+    constructor(playersInfo: playerInfoType, id: string){
         this.info = playersInfo
+        this.id = id
+    }
+    getId(): string {
+        return this.id
     }
     getInfo(): playerInfoType {
         return this.info
