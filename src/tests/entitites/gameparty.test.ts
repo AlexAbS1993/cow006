@@ -18,13 +18,13 @@ describe("GameParty is a one fight in game. It consists 2-4 players and deligate
         expect(typeof playersInfo.stats).toBe("object")
         expect(typeof playersInfo.name).toBe("string")
     })
-    let GP = new GameParty()
+    let GP = new GameParty("")
     beforeEach(() => {
-        GP = new GameParty()
+        GP = new GameParty("")
     })
     test("GameParty has a identifier", () => {
         expect(GP.getGPid()).toBeDefined()
-        expect(typeof GP.getGPid()).toBe("number")
+        expect(typeof GP.getGPid()).toBe("string")
     })
     test("GameParty has a ready status", () => {
         expect(GP.isReadyToStart()).toBe(false)
@@ -67,5 +67,19 @@ describe("GameParty is a one fight in game. It consists 2-4 players and deligate
         GP.addPlayer(mockPlayer2)
         expect(GP.isReadyToStart()).toBe(true)
         // Тестирования запуска игра не будет, пока не создастся соответствующая сущность
+    })
+    test("GameParty messages about a game starts or not", () => {
+        expect(GP.isGameStarted()).toBe(false)
+    })
+    test("GameParty can start a game", () => {
+        GP.setGameStarted()
+        expect(GP.isGameStarted()).toBe(true)
+    })
+    test("GameParty is Full if it is full", () => {
+        GP.addPlayer(mockPlayer)
+        GP.addPlayer(mockPlayer2)
+        GP.addPlayer(mockPlayer3)
+        GP.addPlayer(mockPlayer4)
+        expect(GP.isPartyFull()).toBe(true)
     })
 })

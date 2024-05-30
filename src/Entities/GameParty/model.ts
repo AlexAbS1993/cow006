@@ -2,17 +2,19 @@ import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { reportMessagesLibrary } from "../../consts/reportMessages";
 import { gameRules } from "../../consts/rules";
 import { Iplayer } from "../Player/interface";
-import { IgameParty, listOfPlayers, playersFields } from "./interface";
+import { IgameParty } from "./interface";
 
-export class GameParty implements IgameParty{
-    private id: number
+export class GameParty implements IgameParty {
+    private id: string
     private players: Iplayer[] = []
     private countOfPlayers: number = 0
-    constructor(){
-        this.id = Math.floor(Math.random() * 100000000)
+    private gameStarted: boolean
+    constructor(id: string) {
+        this.id = id
+        this.gameStarted = false
     }
     deletePlayer(id: string): procedureReportType<IgameParty> {
-        if (this.players.every(player => player.getId() !== id)){
+        if (this.players.every(player => player.getId() !== id)) {
             return {
                 success: false,
                 message: reportMessagesLibrary.GameParty.noThatPlayer,
@@ -34,15 +36,15 @@ export class GameParty implements IgameParty{
         this.countOfPlayers--
     }
     addPlayer(player: Iplayer): procedureReportType<IgameParty> {
-       if(this.getCountOfPlayers() === gameRules.maximumPlayers){
-        return {
-            success: false,
-            message: reportMessagesLibrary.GameParty.more4Player,
-            instance: this
+        if (this.getCountOfPlayers() === gameRules.maximumPlayers) {
+            return {
+                success: false,
+                message: reportMessagesLibrary.GameParty.more4Player,
+                instance: this
+            }
         }
-       }   
-       this.players.push(player)
-       this.increaseCountOfPlayer()  
+        this.players.push(player)
+        this.increaseCountOfPlayer()
         return {
             success: true,
             message: reportMessagesLibrary.ok.okMessage,
@@ -50,15 +52,29 @@ export class GameParty implements IgameParty{
         }
     }
     isReadyToStart(): boolean {
-        if(this.getCountOfPlayers() > 1){
+        if (this.getCountOfPlayers() > 1) {
             return true
         }
         return false
     }
-    getCountOfPlayers(){
+    getCountOfPlayers() {
         return this.countOfPlayers
     }
-    getGPid(): number {
+    getGPid(): string {
         return this.id
+    }
+    isGameStarted(): boolean {
+        return this.gameStarted
+    }
+    // Метод устанавливает флажок старта игры в true
+    setGameStarted() {
+        this.gameStarted = true
+    }
+    // Метод устанавливает флажок старта игры в false, когда игра заканчивается
+    setGameEnd() {
+        this.gameStarted = false
+    }
+    isPartyFull() {
+        return this.getCountOfPlayers() === gameRules.maximumPlayers
     }
 }
