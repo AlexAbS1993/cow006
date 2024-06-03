@@ -7,7 +7,7 @@ const discardCardWithNum = 44
 
 describe("Stuff is a stack of 103 cards. It can discard and show cards from itself", () => {
     // Создается колода из 103 карт
-    const stuff = new Stuff(cardListCreator())
+    const stuff = new Stuff(cardListCreator(expectedCountOfCard))
     // Колода для постоянного пересоздания и изменения
     let changabalStuff = {} as Stuff
     // Пустая колода для проверки работы дискарда
@@ -23,12 +23,12 @@ describe("Stuff is a stack of 103 cards. It can discard and show cards from itse
         expect(stuff.getCard(anyRequiredCard)!.getBadPoints()).toBe(7)
     })
     beforeEach(() => {
-       changabalStuff = new Stuff(cardListCreator()) 
+        changabalStuff = new Stuff(cardListCreator(expectedCountOfCard))
     })
-    test("Stuff can discard a card from up",() => {
-       changabalStuff.discardUp()
-       expect(changabalStuff.getCountOfCard()).toBe(expectedCountOfCard - 1)
-       expect(changabalStuff.getUpCard()!.getNominal()).toBe(expectedCountOfCard - 1)
+    test("Stuff can discard a card from up", () => {
+        changabalStuff.discardUp()
+        expect(changabalStuff.getCountOfCard()).toBe(expectedCountOfCard - 1)
+        expect(changabalStuff.getUpCard()!.getNominal()).toBe(expectedCountOfCard - 1)
     })
     test("Stuff can discard a card from any place of stack", () => {
         changabalStuff.discard(discardCardWithNum)
@@ -40,8 +40,13 @@ describe("Stuff is a stack of 103 cards. It can discard and show cards from itse
         expect(emptyStuff.getCountOfCard()).toBe(0)
         expect(emptyStuff.discardUp().getCountOfCard()).toBe(0)
     })
-    test("Empty stuff returns null when trying to get up card", () => { 
+    test("Empty stuff returns null when trying to get up card", () => {
         expect(emptyStuff.getUpCard()).toBeNull()
         expect(emptyStuff.getCard(anyRequiredCard)).toBeNull()
-    })   
+    })
+    test("Stuff can shuffle itself", () => {
+        expect(stuff.getUpCard()!.getNominal()).toBe(expectedCountOfCard)
+        stuff.shuffle()
+        expect(stuff.getUpCard()!.getNominal()).not.toBe(expectedCountOfCard)
+    })
 })
