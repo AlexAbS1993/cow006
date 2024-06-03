@@ -13,6 +13,7 @@ export function enterTheRoomAction(parsedData: enterTheRoomMessageType, ws: ws, 
                     client.currentClient.send(`${user.name ? user.name : user.id} присоединился к комнате`)
                 }
             }
+            user.inGame = true
             return {
                 success: true,
                 message: reportMessagesLibrary.ok.okMessage,

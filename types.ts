@@ -9,6 +9,7 @@ export type userType = {
     id: string,
     name: string | null,
     currentClient: ws
+    inGame: boolean
 }
 
 export type roomsType = {

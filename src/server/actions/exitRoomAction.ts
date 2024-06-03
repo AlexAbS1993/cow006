@@ -13,6 +13,7 @@ export function exitRoomAction(parsedData: exitRoomMessageType, rooms: roomsType
             client.currentClient.send(`${user.name ? user.name : user.id} вышел из комнаты`)
         }
     }
+    user.inGame = false
     return {
         success: true,
         message: reportMessagesLibrary.ok.okMessage,

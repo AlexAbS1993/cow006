@@ -31,6 +31,7 @@ export function doRoomAction(rooms: roomsType, user: userType, games: gamesType)
     gameParty.setLeaderLikeALeader(playerOne)
     // Вероятнее всего "games" должен быть ещё одной сущностью
     games[roomId] = gameParty
+    user.inGame = true
     return {
         success: true,
         message: reportMessagesLibrary.ok.okMessage,

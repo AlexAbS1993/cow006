@@ -50,7 +50,8 @@ webSocketServer.on('connection', (webSocket) => {
             users[id] = {
                 id: id,
                 name: null,
-                currentClient: clients[idWS]
+                currentClient: clients[idWS],
+                inGame: false
             }
         }
         users[id].currentClient = clients[idWS]
