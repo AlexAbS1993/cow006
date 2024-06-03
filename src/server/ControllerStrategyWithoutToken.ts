@@ -1,6 +1,7 @@
 import { expectedParsedDataType, messageFromClientTypes, registrationUserType } from "../../types";
+import { logInAction } from "./actions/logInAction";
+import { registrationAction } from "./actions/registrationAction";
 import { IWebSocketMessageController } from "./interface";
-import { createHmac } from 'node:crypto';
 import ws from 'ws'
 
 export class ControllerStrategyWithoutToken implements IWebSocketMessageController {
@@ -19,37 +20,11 @@ export class ControllerStrategyWithoutToken implements IWebSocketMessageControll
     execute(): void {
         switch (this.messageData.type) {
             case messageFromClientTypes.loginIn: {
-                const { login, password } = this.messageData.data
-                const hash = createHmac('sha256', this.secretKey)
-                    .update(`${login}_${password}`)
-                    .digest('hex');
-                if (this.registrationUsers[hash]) {
-                    this.webSocket.send(JSON.stringify({ token: hash }))
-                }
-                else {
-                    this.webSocket.send("Неверные данные")
-                }
+                logInAction(this.messageData, this.secretKey, this.registrationUsers, this.webSocket)
                 break
             }
             case messageFromClientTypes.registrate: {
-                const { login, password } = this.messageData.data
-                const hash = createHmac('sha256', this.secretKey)
-                    .update(`${login}_${password}`)
-                    .digest('hex');
-                if (this.registrationUsers[hash]) {
-                    this.webSocket.send("Already In system")
-                }
-                else {
-                    const loginHash = createHmac('sha256', this.secretKey)
-                        .update(`${login}`)
-                        .digest('hex');
-                    const passwordHash = createHmac('sha256', this.secretKey)
-                        .update(`${password}`)
-                        .digest('hex');
-                    this.registrationUsers[hash] = {
-                        login: loginHash, password: passwordHash, id: this.wsId
-                    }
-                }
+                registrationAction(this.messageData, this.secretKey, this.registrationUsers, this.webSocket, this.wsId)
                 break
             }
             default: {
