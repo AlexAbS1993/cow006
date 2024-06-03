@@ -9,9 +9,18 @@ export class GameParty implements IgameParty {
     private players: Iplayer[] = []
     private countOfPlayers: number = 0
     private gameStarted: boolean
+    private leader: Iplayer | null
     constructor(id: string) {
         this.id = id
         this.gameStarted = false
+        this.leader = null
+    }
+    getLeader(): Iplayer | null {
+        return this.leader
+    }
+    setLeaderLikeALeader(player: Iplayer): void {
+        this.leader = player
+        return
     }
     deletePlayer(id: string): procedureReportType<IgameParty> {
         if (this.players.every(player => player.getId() !== id)) {

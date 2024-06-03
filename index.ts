@@ -2,10 +2,7 @@ import express from "express"
 import cors from 'cors'
 import ws from 'ws'
 import { v4 as uuid } from 'uuid'
-import { clientsType, expectedParsedDataType, gamesType, messageFromClientTypes, registrationUserType, roomsType, usersType } from "./types"
-import { GameParty } from "./src/Entities/GameParty/model"
-import { Player } from "./src/Entities/Player/model"
-import { playerInfoType } from "./src/Entities/Player/interface"
+import { clientsType, expectedParsedDataType, gamesType, registrationUserType, roomsType, usersType } from "./types"
 import { WebSocketMessageController } from "./src/server/ControllerStrategy"
 import { ControllerStrategyWithoutToken } from "./src/server/ControllerStrategyWithoutToken"
 import { ControllerWrongTokenStrategy } from "./src/server/ControllerWrongTokenStrategy"
@@ -51,18 +48,20 @@ webSocketServer.on('connection', (webSocket) => {
         // Если пользователя еще нет среди игроков, то создается его пустой профиль с апдейтом текущего клиента
         if (!users[id]) {
             users[id] = {
+                id: id,
                 name: null,
                 currentClient: clients[idWS]
             }
-            users[id].currentClient = clients[idWS]
         }
+        users[id].currentClient = clients[idWS]
+        // Возможно стоит передавать просто user, а не всех юзеров
         messageController.defineStrategy(new ControllerStrategyToken(id, parsedData, rooms, users, games, webSocket))
         messageController.execute()
         return
     })
     webSocket.on("close", () => {
         delete clients[idWS]
-        delete users[id]
+        // delete users[id]  возможно лишнее
         console.log(`${idWS} - клиент отключился`)
     })
 })

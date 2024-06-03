@@ -11,6 +11,8 @@ export interface IgameParty {
     isGameStarted(): boolean
     setGameEnd(): void
     isPartyFull(): boolean
+    setLeaderLikeALeader(player: Iplayer): void
+    getLeader(): Iplayer | null
 }
 
 export enum playersFields {

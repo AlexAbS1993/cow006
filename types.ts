@@ -6,6 +6,7 @@ export type clientsType = {
 }
 
 export type userType = {
+    id: string,
     name: string | null,
     currentClient: ws
 }
