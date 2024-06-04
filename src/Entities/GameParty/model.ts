@@ -15,6 +15,9 @@ export class GameParty implements IgameParty {
         this.gameStarted = false
         this.leader = null
     }
+    getPlayers(): Iplayer[] {
+        return this.players;
+    }
     getLeader(): Iplayer | null {
         return this.leader
     }

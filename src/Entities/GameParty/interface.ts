@@ -7,12 +7,13 @@ export interface IgameParty {
     addPlayer(player: Iplayer): procedureReportType<IgameParty>
     increaseCountOfPlayer(): void
     decrieseCountOfPlayer(): void
-    deletePlayer(name: string): procedureReportType<IgameParty>
+    deletePlayer(id: string): procedureReportType<IgameParty>
     isGameStarted(): boolean
     setGameEnd(): void
     isPartyFull(): boolean
     setLeaderLikeALeader(player: Iplayer): void
     getLeader(): Iplayer | null
+    getPlayers(): Iplayer[]
 }
 
 export enum playersFields {
