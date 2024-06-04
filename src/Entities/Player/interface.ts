@@ -2,7 +2,7 @@
 // Пока что это просто цифры 0 и 0
 
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type"
-import { Icard } from "../Card/interface"
+import { IgameParty } from "../GameParty/interface"
 import { Ihand } from "../Hand/interface"
 
 type statsType = {
@@ -24,11 +24,16 @@ export interface Iplayer {
     // setStatistic(): Promise<procedureReportType<Iplayer>>
     getId(): string
     getHand(): Ihand
-    takeHand(hand:Ihand): procedureReportType<Iplayer>
-    cardsCount():number
+    takeHand(hand: Ihand): procedureReportType<Iplayer>
+    cardsCount(): number
     // getCardFromHand(): Icard
     discardCardFromHand(nO: number): procedureReportType<Iplayer>
     // inGame():boolean
-    // getGameInfo():null|unknown
-    // defineGameInfo(gameInfo: unknown):procedureReportType<Iplayer>
+    getGameInfo(): null | playersGameInfoType
+    defineGameInfo(gameInfo: IgameParty): procedureReportType<Iplayer>
+}
+
+export type playersGameInfoType = {
+    gameId: string
+    players: Iplayer[]
 }

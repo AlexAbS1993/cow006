@@ -1,17 +1,38 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { reportMessagesLibrary } from "../../consts/reportMessages";
-import { Icard } from "../Card/interface";
+import { IgameParty } from "../GameParty/interface";
 import { Ihand } from "../Hand/interface";
 import { Hand } from "../Hand/model";
-import { Iplayer, playerInfoType } from "./interface";
+import { Iplayer, playerInfoType, playersGameInfoType } from "./interface";
 
 export class Player implements Iplayer {
     private info: playerInfoType
     private hand: Ihand = new Hand(10)
     private id: string
-    constructor(playersInfo: playerInfoType, id: string){
+    private gameInfo: null | IgameParty
+    constructor(playersInfo: playerInfoType, id: string) {
         this.info = playersInfo
         this.id = id
+        this.gameInfo = null
+    }
+    getGameInfo(): playersGameInfoType | null {
+        if (!this.gameInfo) {
+            return null
+        }
+        else {
+            return {
+                gameId: this.gameInfo.getGPid(),
+                players: this.gameInfo.getPlayers()
+            }
+        }
+    }
+    defineGameInfo(gameInfo: IgameParty): procedureReportType<Iplayer> {
+        this.gameInfo = gameInfo
+        return {
+            success: true,
+            message: reportMessagesLibrary.ok.okMessage,
+            instance: this
+        }
     }
     getId(): string {
         return this.id
