@@ -28,7 +28,8 @@ export interface Iplayer {
     cardsCount(): number
     // getCardFromHand(): Icard
     discardCardFromHand(nO: number): procedureReportType<Iplayer>
-    // inGame():boolean
+    inGame(): boolean
+    setInGame(value: boolean): void
     getGameInfo(): null | playersGameInfoType
     defineGameInfo(gameInfo: IgameParty): procedureReportType<Iplayer>
 }

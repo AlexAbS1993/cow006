@@ -7,6 +7,7 @@ import { WebSocketMessageController } from "./src/server/ControllerStrategy"
 import { ControllerStrategyWithoutToken } from "./src/server/ControllerStrategyWithoutToken"
 import { ControllerWrongTokenStrategy } from "./src/server/ControllerWrongTokenStrategy"
 import { ControllerStrategyToken } from "./src/server/ControllerStrategyToken"
+import { User } from "./src/server/entities/user/model"
 
 const app = express()
 const webSocketServer = new ws.WebSocketServer({ port: 5000 })
@@ -45,16 +46,11 @@ webSocketServer.on('connection', (webSocket) => {
         }
         // Если токен рабочий, то пользователь получает свой id
         id = registrationUsers[token].id
-        // Если пользователя еще нет среди игроков, то создается его пустой профиль с апдейтом текущего клиента
+        // Если пользователя еще нет среди игроков, то создается его пустой профиль
         if (!users[id]) {
-            users[id] = {
-                id: id,
-                name: null,
-                currentClient: clients[idWS],
-                inGame: false
-            }
+            users[id] = new User(id, id)
         }
-        users[id].currentClient = clients[idWS]
+        users[id].setCurrentWebSocket(webSocket)
         // Возможно стоит передавать просто user, а не всех юзеров
         messageController.defineStrategy(new ControllerStrategyToken(id, parsedData, rooms, users, games, webSocket))
         messageController.execute()
@@ -62,7 +58,6 @@ webSocketServer.on('connection', (webSocket) => {
     })
     webSocket.on("close", () => {
         delete clients[idWS]
-        // delete users[id]  возможно лишнее
         console.log(`${idWS} - клиент отключился`)
     })
 })

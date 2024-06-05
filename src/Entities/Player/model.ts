@@ -10,10 +10,19 @@ export class Player implements Iplayer {
     private hand: Ihand = new Hand(10)
     private id: string
     private gameInfo: null | IgameParty
+    private inGameStatus: boolean
     constructor(playersInfo: playerInfoType, id: string) {
         this.info = playersInfo
         this.id = id
         this.gameInfo = null
+        this.inGameStatus = false
+    }
+    setInGame(value: boolean): void {
+        this.inGameStatus = value
+        return
+    }
+    inGame(): boolean {
+        return this.inGameStatus
     }
     getGameInfo(): playersGameInfoType | null {
         if (!this.gameInfo) {

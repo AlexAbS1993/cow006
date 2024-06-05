@@ -1,8 +1,10 @@
-import { loginInDataType, registrationUserType } from "../../../types";
+import { loginInDataType, messageForSendFromServerEnum, registrationUserType } from "../../../types";
 import { createHmac } from 'node:crypto';
 import ws from 'ws'
 import { reportMessagesLibrary } from "../../consts/reportMessages";
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
+import { webSocketProcedureReportType } from "../../Adds/Reports/webSocketReport.type";
+import { webSocketReportMessagesLibrary } from "../../consts/webSocketResponseMessage";
 
 export function logInAction(parsedData: loginInDataType, secretKey: string, registrationUsers: registrationUserType, webSocket: ws): procedureReportType<null> {
     const { login, password } = parsedData.data
@@ -10,7 +12,15 @@ export function logInAction(parsedData: loginInDataType, secretKey: string, regi
         .update(`${login}_${password}`)
         .digest('hex');
     if (registrationUsers[hash]) {
-        webSocket.send(JSON.stringify({ token: hash }))
+        let report: webSocketProcedureReportType<{ token: string }> = {
+            success: true,
+            message: webSocketReportMessagesLibrary.successLogIn(),
+            type: messageForSendFromServerEnum.successLogIn,
+            data: {
+                token: hash
+            }
+        }
+        webSocket.send(JSON.stringify(report))
         return {
             success: true,
             message: reportMessagesLibrary.ok.okMessage,
@@ -18,7 +28,12 @@ export function logInAction(parsedData: loginInDataType, secretKey: string, regi
         }
     }
     else {
-        webSocket.send("Неверные данные")
+        let report: webSocketProcedureReportType = {
+            success: false,
+            message: webSocketReportMessagesLibrary.logInWrongDatas(),
+            type: messageForSendFromServerEnum.logInWrongDatas
+        }
+        webSocket.send(JSON.stringify(report))
         return {
             success: false,
             message: reportMessagesLibrary.server.wrongLogInData,

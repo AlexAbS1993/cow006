@@ -39,7 +39,11 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
                 break
             }
             case messageFromClientTypes.exitTheRoom: {
-                exitRoomAction(this.parsedData, this.rooms, this.webSocket, this.users[this.id])
+                exitRoomAction(this.parsedData, this.rooms, this.webSocket, this.users[this.id], this.games)
+                break
+            }
+            case messageFromClientTypes.startTheGame: {
+
                 break
             }
             default: {

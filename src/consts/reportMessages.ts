@@ -8,8 +8,9 @@ type reportMessagesOkType = typeof reportMessagesLibrary.ok[keyof typeof reportM
 // }
 type reportMessageGamePartyType = typeof reportMessagesLibrary.GameParty[keyof typeof reportMessagesLibrary.GameParty]
 type reportMessageServerType = typeof reportMessagesLibrary.server[keyof typeof reportMessagesLibrary.server]
+type reportMessageGameType = typeof reportMessagesLibrary.game[keyof typeof reportMessagesLibrary.game]
 
-type reportMessagesListType = reportMessagesHandType | reportMessagesOkType | reportMessageGamePartyType | reportMessageServerType
+type reportMessagesListType = reportMessagesHandType | reportMessagesOkType | reportMessageGamePartyType | reportMessageServerType | reportMessageGameType
 export type reportMessagesLibraryType = reportMessagesListType
 
 export const reportMessagesLibrary = {
@@ -29,5 +30,8 @@ export const reportMessagesLibrary = {
         wrongLogInData: "Неверные данные для входа" as const,
         gameIsAlreadyStarted: "Игра уже началась" as const,
         roomIsNotExist: "Комнаты не существует" as const
+    } as const,
+    game: {
+        notALeader: "Инициатором выступает не лидер" as const
     } as const
 }

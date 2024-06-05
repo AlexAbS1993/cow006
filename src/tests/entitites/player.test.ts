@@ -37,10 +37,10 @@ describe("Player is a important part of the game. It has hand, info and gameInfo
     test("Player can discard a card from hand", () => {
         player.discardCardFromHand(1)
         expect(player.cardsCount()).toBe(2)
-        expect(mockHand.__getHand().findIndex((card: Icard) => card.getNominal()===1)).toBe(-1)
+        expect(mockHand.__getHand().findIndex((card: Icard) => card.getNominal() === 1)).toBe(-1)
     })
     test("Player can change info about itself", () => {
-        let newPlayerInformation:playerInfoType = {
+        let newPlayerInformation: playerInfoType = {
             name: "Alex",
             rang: 100,
             stats: {
@@ -51,6 +51,13 @@ describe("Player is a important part of the game. It has hand, info and gameInfo
         player.changeInfo(newPlayerInformation)
         expect(player.getInfo().rang).toBe(100)
         expect(player.getInfo().stats.wins).toBe(50)
+    })
+    test("Player can be in game and out of it", () => {
+        expect(player.inGame()).toBe(false)
+        player.setInGame(true)
+        expect(player.inGame()).toBe(true)
+        player.setInGame(false)
+        expect(player.inGame()).toBe(false)
     })
     // Тестирование об игровой информации не реализовано до создания сущности по Игре
 })

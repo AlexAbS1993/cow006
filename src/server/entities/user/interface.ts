@@ -3,10 +3,11 @@ import ws from 'ws'
 export interface IUser {
     getId(): string,
     getName(): string,
-    setName(): string,
-    getWS(): ws
+    setName(name: string): void,
+    getWS(): ws | null
     inGame(): boolean
     setInGame(value: boolean): void
     setRoom(roomId: string): void
-    getRoomId(): string
+    getRoomId(): string | null
+    setCurrentWebSocket(ws: ws): void
 }

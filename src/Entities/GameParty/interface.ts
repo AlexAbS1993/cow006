@@ -10,6 +10,7 @@ export interface IgameParty {
     deletePlayer(id: string): procedureReportType<IgameParty>
     isGameStarted(): boolean
     setGameEnd(): void
+    setGameStarted(): void
     isPartyFull(): boolean
     setLeaderLikeALeader(player: Iplayer): void
     getLeader(): Iplayer | null
