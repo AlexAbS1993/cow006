@@ -59,5 +59,9 @@ describe("Player is a important part of the game. It has hand, info and gameInfo
         player.setInGame(false)
         expect(player.inGame()).toBe(false)
     })
+    test("У игрока есть коллекция из карт со штрафными баллами", () => {
+        expect(player.getPenaltySet()).toBeDefined()
+        expect(player.howPenaltyPoints()).toBe(0)
+    })
     // Тестирование об игровой информации не реализовано до создания сущности по Игре
 })

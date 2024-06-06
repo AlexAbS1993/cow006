@@ -32,6 +32,7 @@ export const reportMessagesLibrary = {
         roomIsNotExist: "Комнаты не существует" as const
     } as const,
     game: {
-        notALeader: "Инициатором выступает не лидер" as const
+        notALeader: "Инициатором выступает не лидер" as const,
+        replaced: "Строка карт заменена" as const
     } as const
 }
