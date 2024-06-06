@@ -3,7 +3,10 @@ import { reportMessagesLibrary } from "../../consts/reportMessages";
 import { IgameParty } from "../GameParty/interface";
 import { Ihand } from "../Hand/interface";
 import { Hand } from "../Hand/model";
+import { IPenaltySet } from "../PenaltySet/interface";
+import { PenaltySet } from "../PenaltySet/model";
 import { Iplayer, playerInfoType, playersGameInfoType } from "./interface";
+import { v4 as uuid } from 'uuid'
 
 export class Player implements Iplayer {
     private info: playerInfoType
@@ -11,11 +14,19 @@ export class Player implements Iplayer {
     private id: string
     private gameInfo: null | IgameParty
     private inGameStatus: boolean
+    private penaltySet: IPenaltySet
     constructor(playersInfo: playerInfoType, id: string) {
         this.info = playersInfo
         this.id = id
         this.gameInfo = null
         this.inGameStatus = false
+        this.penaltySet = new PenaltySet(uuid(), id)
+    }
+    howPenaltyPoints(): number {
+        return this.penaltySet.getPenaltyResult()
+    }
+    getPenaltySet(): IPenaltySet {
+        return this.penaltySet
     }
     setInGame(value: boolean): void {
         this.inGameStatus = value

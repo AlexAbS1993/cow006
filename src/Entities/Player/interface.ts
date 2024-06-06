@@ -4,6 +4,7 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type"
 import { IgameParty } from "../GameParty/interface"
 import { Ihand } from "../Hand/interface"
+import { IPenaltySet } from "../PenaltySet/interface"
 
 type statsType = {
     wins: number,
@@ -32,6 +33,8 @@ export interface Iplayer {
     setInGame(value: boolean): void
     getGameInfo(): null | playersGameInfoType
     defineGameInfo(gameInfo: IgameParty): procedureReportType<Iplayer>
+    getPenaltySet(): IPenaltySet
+    howPenaltyPoints(): number
 }
 
 export type playersGameInfoType = {
