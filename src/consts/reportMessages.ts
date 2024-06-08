@@ -32,7 +32,10 @@ export const reportMessagesLibrary = {
         roomIsNotExist: "Комнаты не существует" as const
     } as const,
     game: {
+        anotherStep: "На этом этапе игры нельзя выполнить действие" as const,
         notALeader: "Инициатором выступает не лидер" as const,
-        replaced: "Строка карт заменена" as const
+        replaced: "Строка карт заменена" as const,
+        playersCardHasAlredyWhere: "Игрок уже сыграл карту" as const,
+        isNotMatchAnyRow: "Невозможно добавить, так как не подходит ни к одной полосе" as const
     } as const
 }

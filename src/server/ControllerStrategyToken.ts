@@ -34,7 +34,7 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
             }
             case messageFromClientTypes.setName: {
                 const name = this.parsedData.data.name
-                this.users[this.id].name = name
+                this.users[this.id].setName(name)
                 this.webSocket.send(`Теперь ты ${name}`)
                 break
             }

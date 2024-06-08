@@ -1,8 +1,6 @@
 import { Icard } from "../../Entities/Card/interface"
 import { Card } from "../../Entities/Card/model"
 
-const countOfCards = 103
-
 export function cardListCreator(countOfCard: number) {
     let result: Icard[] = []
     let currentNominal = 1
