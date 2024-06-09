@@ -17,7 +17,14 @@ export class PrepearGameStateStrategy implements IStateForGame {
         this.name = name
         this.game = game
     }
-    prepare(): void {
+    fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame> {
+        return {
+            success: false,
+            message: reportMessagesLibrary.game.anotherStep,
+            instance: this.game
+        }
+    }
+    prepare(): procedureReportType<IGame> {
         this.game.getStuff().shuffle()
         for (let player of this.game.getPlayers() as Iplayer[]) {
             let hand = new Hand(this.game.limitOfCardInHand)
@@ -32,8 +39,14 @@ export class PrepearGameStateStrategy implements IStateForGame {
             this.game.getStuff().discardUp()
         }
         this.game.setGameReady(true)
+        this.game.unblock()
         this.game.setGameState(GameStates.process)
         this.game.setGameStrategy(new ProcessGameStrategy(this.game, GameStates.process))
+        return {
+            success: true,
+            message: reportMessagesLibrary.ok.okMessage,
+            instance: this.game
+        }
     }
     getEndsResult(): resultEndGameType {
         return {}

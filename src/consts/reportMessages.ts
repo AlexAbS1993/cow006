@@ -36,6 +36,8 @@ export const reportMessagesLibrary = {
         notALeader: "Инициатором выступает не лидер" as const,
         replaced: "Строка карт заменена" as const,
         playersCardHasAlredyWhere: "Игрок уже сыграл карту" as const,
-        isNotMatchAnyRow: "Невозможно добавить, так как не подходит ни к одной полосе" as const
+        isNotMatchAnyRow: "Невозможно добавить, так как не подходит ни к одной полосе" as const,
+        switchToCheckPool: "Переключен на режим проверки пула" as const,
+        needToSelect: "Необходимо выбрать ряд" as const
     } as const
 }

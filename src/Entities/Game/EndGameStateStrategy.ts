@@ -13,8 +13,20 @@ export class EndGameStrategy implements IStateForGame {
         this.name = name
         this.game = game
     }
-    prepare(): void {
-        return
+    fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame> {
+        return {
+            success: false,
+            message: reportMessagesLibrary.game.anotherStep,
+            instance: this.game
+        }
+    }
+
+    prepare(): procedureReportType<IGame> {
+        return {
+            success: false,
+            message: reportMessagesLibrary.game.anotherStep,
+            instance: this.game
+        }
     }
     addToPool(card: Icard, player: Iplayer): procedureReportType<IPool> {
         return {

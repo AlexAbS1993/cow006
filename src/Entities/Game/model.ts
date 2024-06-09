@@ -3,12 +3,10 @@ import { cardListCreator } from "../../Instruments/Creators/CardList.creator";
 import { GameMods, GameStates, GameSteps } from "../../consts/rules";
 import { Icard } from "../Card/interface";
 import { IgameParty } from "../GameParty/interface";
-import { Hand } from "../Hand/model";
 import { Iplayer } from "../Player/interface";
 import { IPool } from "../Pool/interface";
 import { Pool } from "../Pool/model";
 import { IRow } from "../Row/interface";
-import { Row } from "../Row/model";
 import { Istuff } from "../Stuff/interface";
 import { Stuff } from "../Stuff/model";
 import { PrepearGameStateStrategy } from "./PrepearingGameStateStrategy";
@@ -27,6 +25,7 @@ export class Game implements IGame {
     private rows: IRow[]
     private pool: IPool
     private stateStrategy: IStateForGame
+    private blocked: boolean
     constructor(id: string, mode: GameMods, party: IgameParty) {
         this.readyGame = false
         this.id = id
@@ -50,12 +49,25 @@ export class Game implements IGame {
                 break
             }
         }
+        this.blocked = true
         this.state = GameStates.prepearing
         this.stateStrategy = new PrepearGameStateStrategy(this, GameStates.prepearing)
         this.step = GameSteps.cardSelection
         this.rows = []
         // Определяется пул сыгранных карт по количеству игроков
         this.pool = new Pool(party.getPlayers().length)
+    }
+    fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame> {
+        return this.stateStrategy.fromPoolToRowWithSelect(rowIndex)
+    }
+    getBlock(): boolean {
+        return this.blocked
+    }
+    setBlock(): void {
+        this.blocked = true
+    }
+    unblock(): void {
+        this.blocked = false
     }
 
     setGameState(state: GameStates): void {
@@ -69,7 +81,7 @@ export class Game implements IGame {
     getGameId() {
         return this.id
     }
-    prepare(): void {
+    prepare(): procedureReportType<IGame> {
         // this.stuff.shuffle()
         // for (let player of this.players) {
         //     let hand = new Hand(this.limitOfCardInHand)
@@ -85,7 +97,7 @@ export class Game implements IGame {
         // }
         // this.readyGame = true
         // this.state = GameStates.process
-        this.stateStrategy.prepare()
+        return this.stateStrategy.prepare()
     }
     isReady(): boolean {
         return this.readyGame

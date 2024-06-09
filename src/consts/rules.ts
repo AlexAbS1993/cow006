@@ -12,7 +12,7 @@ export enum GameMods {
 }
 
 export enum GameStates {
-    "prepearing" = "prepearing", "process" = "process", "end" = "end"
+    "prepearing" = "prepearing", "process" = "process", "end" = "end", "checking" = "checking"
 }
 
 export enum GameSteps {

@@ -20,7 +20,7 @@ export type resultEndGameType = {
 
 export interface IGame {
     getGameId(): string
-    prepare(): void
+    prepare(): procedureReportType<IGame>
     isReady(): boolean
     getPlayers(): Iplayer[] | null
     getMod(): GameMods
@@ -33,16 +33,21 @@ export interface IGame {
     getPool(): IPool
     getRows(): IRow[]
     fromPoolToRow(): procedureReportType<IGame>
+    fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame>
     getEndsResult(): resultEndGameType
     setGameReady(value: boolean): void
     checkAllSettledToPullToRow(): boolean
+    getBlock(): boolean
+    setBlock(): void
+    unblock(): void
 }
 
 export interface IStateForGame {
-    prepare(): void
+    prepare(): procedureReportType<IGame>
     getEndsResult(): resultEndGameType
     getGameStep(): IStateForGame
     getName(): GameStates
     addToPool(card: Icard, player: Iplayer): procedureReportType<IPool>
     fromPoolToRow(): procedureReportType<IGame>
+    fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame>
 }
