@@ -40,11 +40,10 @@ export class PrepearGameStateStrategy implements IStateForGame {
         }
         this.game.setGameReady(true)
         this.game.unblock()
-        this.game.setGameState(GameStates.process)
         this.game.setGameStrategy(new ProcessGameStrategy(this.game, GameStates.process))
         return {
             success: true,
-            message: reportMessagesLibrary.ok.okMessage,
+            message: reportMessagesLibrary.game.switchToProcess,
             instance: this.game
         }
     }

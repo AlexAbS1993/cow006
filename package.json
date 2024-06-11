@@ -4,7 +4,7 @@
   "description": "This is an unofficial version of cow006",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=prod jest",
+    "test": "cross-env NODE_ENV=dev jest",
     "build": "tsc",
     "start": "node ./build/index.js",
     "watchTSC": "tsc --watch",

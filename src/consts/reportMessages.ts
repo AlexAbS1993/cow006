@@ -38,6 +38,8 @@ export const reportMessagesLibrary = {
         playersCardHasAlredyWhere: "Игрок уже сыграл карту" as const,
         isNotMatchAnyRow: "Невозможно добавить, так как не подходит ни к одной полосе" as const,
         switchToCheckPool: "Переключен на режим проверки пула" as const,
+        switchToProcess: "Переключен на режим игрового процесса" as const,
+        switchToEnd: "Переключен на режим конца игры" as const,
         needToSelect: "Необходимо выбрать ряд" as const
     } as const
 }

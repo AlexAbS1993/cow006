@@ -11,9 +11,10 @@ describe("Pool - сущность, хранящая карты от каждог
     let pool: IPool
     let player1 = new Player(playersInfoGenerator(), playersIdGenerator())
     let player2 = new Player(playersInfoGenerator(), playersIdGenerator())
+    let player3 = new Player(playersInfoGenerator(), playersIdGenerator())
     let cards = cardListCreator(103)
     beforeEach(() => {
-        pool = new Pool(2)
+        pool = new Pool(3)
     })
     test("У Pool есть массив, куда кладутся карты. Каждая карта занимает ячейку. Количество ячеек равно количесвут игроков", () => {
         expect(pool.getPool()).toBeDefined()
@@ -35,14 +36,15 @@ describe("Pool - сущность, хранящая карты от каждог
         pool.addCard(cards[50], player1)
         expect(pool.isAllSettled()).toBe(false)
         pool.addCard(cards[4], player2)
+        pool.addCard(cards[5], player3)
         expect(pool.isAllSettled()).toBe(true)
         expect(pool.getPool()[0].player.getId()).toBe(player2.getId())
     })
     test("Pool самоочищается", () => {
         pool.addCard(cards[50], player1)
         pool.addCard(cards[4], player2)
-        expect(pool.getCountOfPlaces().free).toBe(0)
+        expect(pool.getCountOfPlaces().free).toBe(1)
         pool.clear()
-        expect(pool.getCountOfPlaces().free).toBe(2)
+        expect(pool.getCountOfPlaces().free).toBe(3)
     })
 })

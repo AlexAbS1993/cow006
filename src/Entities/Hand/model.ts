@@ -50,7 +50,11 @@ export class Hand implements Ihand {
         }
         }
         // Только для тестирования!!!
-        __getHand(){
+    __getHand(){
             return this.hand
+        }
+    __clearHand(){
+            this.hand = []
+            return
         }
    }

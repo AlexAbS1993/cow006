@@ -22,9 +22,9 @@ export interface IGame {
     getGameId(): string
     prepare(): procedureReportType<IGame>
     isReady(): boolean
-    getPlayers(): Iplayer[] | null
+    getPlayers(): Iplayer[]
     getMod(): GameMods
-    getParty(): IgameParty | null
+    getParty(): IgameParty
     getStuff(): Istuff
     getGameState(): GameStates
     setGameState(state: GameStates): void
@@ -40,6 +40,8 @@ export interface IGame {
     getBlock(): boolean
     setBlock(): void
     unblock(): void
+    retake(): procedureReportType<IGame>
+    needToRetake(): boolean
 }
 
 export interface IStateForGame {

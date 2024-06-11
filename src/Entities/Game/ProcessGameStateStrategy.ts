@@ -64,7 +64,7 @@ export class ProcessGameStrategy implements IStateForGame {
             instance: this.game
         }
     }
-    getPool() {
+    private getPool() {
         return this.game.getPool()
     }
 }

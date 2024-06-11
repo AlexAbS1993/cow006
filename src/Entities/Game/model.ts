@@ -1,14 +1,17 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { cardListCreator } from "../../Instruments/Creators/CardList.creator";
+import { reportMessagesLibrary } from "../../consts/reportMessages";
 import { GameMods, GameStates, GameSteps } from "../../consts/rules";
 import { Icard } from "../Card/interface";
 import { IgameParty } from "../GameParty/interface";
+import { Hand } from "../Hand/model";
 import { Iplayer } from "../Player/interface";
 import { IPool } from "../Pool/interface";
 import { Pool } from "../Pool/model";
 import { IRow } from "../Row/interface";
 import { Istuff } from "../Stuff/interface";
 import { Stuff } from "../Stuff/model";
+import { EndGameStrategy } from "./EndGameStateStrategy";
 import { PrepearGameStateStrategy } from "./PrepearingGameStateStrategy";
 import { IGame, IStateForGame, resultEndGameType } from "./interface";
 
@@ -57,6 +60,7 @@ export class Game implements IGame {
         // Определяется пул сыгранных карт по количеству игроков
         this.pool = new Pool(party.getPlayers().length)
     }
+    
     fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame> {
         return this.stateStrategy.fromPoolToRowWithSelect(rowIndex)
     }
@@ -82,33 +86,18 @@ export class Game implements IGame {
         return this.id
     }
     prepare(): procedureReportType<IGame> {
-        // this.stuff.shuffle()
-        // for (let player of this.players) {
-        //     let hand = new Hand(this.limitOfCardInHand)
-        //     for (let i = 1; i <= this.limitOfCardInHand; i++) {
-        //         hand.addCard(this.stuff.getUpCard() as Icard)
-        //         this.stuff.discardUp()
-        //     }
-        //     player.takeHand(hand)
-        // }
-        // for (let j = 0; j < 4; j++) {
-        //     this.rows[j] = new Row(this.stuff.getUpCard() as Icard)
-        //     this.stuff.discardUp()
-        // }
-        // this.readyGame = true
-        // this.state = GameStates.process
         return this.stateStrategy.prepare()
     }
     isReady(): boolean {
         return this.readyGame
     }
-    getPlayers(): Iplayer[] | null {
+    getPlayers(): Iplayer[]{
         return this.players
     }
     getMod(): GameMods {
         return this.mode
     }
-    getParty(): IgameParty | null {
+    getParty(): IgameParty{
         return this.party
     }
     getStuff(): Istuff {
@@ -136,15 +125,49 @@ export class Game implements IGame {
         return this.stateStrategy.getEndsResult()
     }
     setGameStrategy(gameStrategy: IStateForGame) {
+        this.setGameState(gameStrategy.getName())
         this.stateStrategy = gameStrategy
         return
     }
     checkAllSettledToPullToRow(): boolean {
         return this.getPool().isAllSettled()
     }
-    // Только для тестов!!!
-    __fakeRowsCreate(rows: IRow[]) {
-        this.rows = rows
-        return
+
+    retake(): procedureReportType<IGame> {
+        if(this.stuff.getCountOfCard() >= this.players.length * 10){
+            let stuff = this.getStuff()
+            for (let player of this.getPlayers() as Iplayer[]) {
+                let hand = new Hand(this.limitOfCardInHand)
+                for (let i = 1; i <= this.limitOfCardInHand; i++) {
+                    hand.addCard(stuff.getUpCard() as Icard)
+                    stuff.discardUp()
+                }
+                player.takeHand(hand)
+            }
+            return {
+                success: true,
+                message: "ok",
+                instance: this
+            }
+        }
+        else {
+            this.setGameStrategy(new EndGameStrategy(this, GameStates.end))
+            return {
+                success: false,
+                message: reportMessagesLibrary.game.switchToEnd,
+                instance: this
+            }
+        }
     }
+    needToRetake(): boolean {
+        return this.getPlayers()[0].cardsCount() === 0
+    }
+        // Только для тестов!!!
+        __fakeRowsCreate(rows: IRow[]) {
+            this.rows = rows
+            return
+        }
+        __fakeEndGame(){
+            this.setGameStrategy(new EndGameStrategy(this, GameStates.end))
+        }
 }
