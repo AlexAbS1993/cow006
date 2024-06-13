@@ -1,4 +1,4 @@
-import { gamesType } from '../../../types';
+import { gamesPartiesType } from '../../../types';
 import { v4 as uuid } from 'uuid'
 import { roomsType } from '../../../types'
 import { GameParty } from '../../Entities/GameParty/model'
@@ -13,7 +13,7 @@ export function createShortRoomId() {
 }
 
 // Экшн, создающий комнату и делающий игрока, создавшего её, лидером, принимающим решение о старте матча
-export function doRoomAction(rooms: roomsType, user: IUser, games: gamesType): procedureReportType<null> {
+export function doRoomAction(rooms: roomsType, user: IUser, games: gamesPartiesType): procedureReportType<null> {
     let roomId = createShortRoomId()
     rooms[roomId] = []
     rooms[roomId].push(user)
@@ -27,13 +27,12 @@ export function doRoomAction(rooms: roomsType, user: IUser, games: gamesType): p
             looses: 0
         }
     }
-    const playerOne = new Player(playersInfo, user.getName())
+    const playerOne = new Player(playersInfo, user.getId())
     gameParty.addPlayer(playerOne)
     gameParty.setLeaderLikeALeader(playerOne)
     // Вероятнее всего "games" должен быть ещё одной сущностью
     games[roomId] = gameParty
-    playerOne.setInGame(true)
-    user.setInGame(true)
+    user.setRoom(roomId)
     return {
         success: true,
         message: reportMessagesLibrary.ok.okMessage,

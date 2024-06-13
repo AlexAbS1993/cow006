@@ -10,4 +10,6 @@ export interface IUser {
     setRoom(roomId: string): void
     getRoomId(): string | null
     setCurrentWebSocket(ws: ws): void
+    getGameId(): string | null
+    setGameId(id: string): void
 }

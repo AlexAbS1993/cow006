@@ -1,10 +1,16 @@
-import { enterTheRoomMessageType, exitRoomMessageType, gamesType, messageFromClientTypes, roomsType, usersType } from "../../../types"
+import { enterTheRoomMessageType, exitRoomMessageType, gamesPartiesType, gamesType, messageFromClientTypes, roomsType, theGameStartType, usersType } from "../../../types"
 import { createShortRoomId, doRoomAction } from "../../server/actions/doRoomAction"
 import { v4 as uuid } from 'uuid'
 import ws from 'ws'
 import { enterTheRoomAction } from "../../server/actions/enterTheRoomAction"
 import { exitRoomAction } from "../../server/actions/exitRoomAction"
 import { User } from "../../server/entities/user/model"
+import { startTheGameAction } from "../../server/actions/startTheGameAction"
+import { GameMods } from "../../consts/rules"
+import { Player } from "../../Entities/Player/model"
+import { playersInfoGenerator } from "../entitites/helpers/playersInfoGenerator"
+import { GameParty } from "../../Entities/GameParty/model"
+import { Iplayer } from "../../Entities/Player/interface"
 describe("CSTactions is a procedure for executing operation by parsedData 'type'", () => {
     let mockId = uuid()
     let mockWS = {
@@ -12,12 +18,13 @@ describe("CSTactions is a procedure for executing operation by parsedData 'type'
 
         }
     } as ws
-    let mockGames: gamesType = {}
+    let mockGames: gamesPartiesType = {}
     let mockRooms: roomsType = {}
     let mockUsers: usersType = {
         [mockId]: new User("sagsga", "Alex"),
         [mockId + "1"]: new User("asg", "Valya")
     }
+    let mockStartedGames: gamesType = {}
     mockUsers[mockId].setCurrentWebSocket(mockWS)
     mockUsers[mockId + "1"].setCurrentWebSocket({ ...mockWS } as ws)
 
@@ -26,7 +33,9 @@ describe("CSTactions is a procedure for executing operation by parsedData 'type'
     })
     test("doRoom works with games, users and rooms. It left notes about entities changes", () => {
         doRoomAction(mockRooms, mockUsers[mockId], mockGames)
+        let roomId:string = ''
         for (let room in mockRooms) {
+            roomId = room
             expect(mockRooms[room][0].getName()).toBe("Alex")
         }
         for (let game in mockGames) {
@@ -34,7 +43,7 @@ describe("CSTactions is a procedure for executing operation by parsedData 'type'
         }
         for (let user in mockUsers) {
             if (mockUsers[user].getName() === "Alex") {
-                expect(mockUsers[user].inGame()).toBe(true)
+                expect(mockUsers[user].getRoomId()).toBe(roomId as string)
             }
         }
     })
@@ -75,5 +84,29 @@ describe("CSTactions is a procedure for executing operation by parsedData 'type'
             expect(mockRooms[room][1]).toBeUndefined()
             expect(mockGames[room].getPlayers().length).toBe(1)
         }
+    })
+    test("StartGameAction запускает игру и проводит её подготовительную фазу", ()=> {
+        let mockParsedData: theGameStartType = {
+            type: messageFromClientTypes.startTheGame,
+            data: {
+                mode: GameMods.classic
+            }
+        }
+        doRoomAction(mockRooms, mockUsers[mockId], mockGames)
+        let roomId:string = mockUsers[mockId].getRoomId() as string
+        let mockParsedDataForEnter: enterTheRoomMessageType = {
+            type: messageFromClientTypes.enterTheRoom,
+            data: {
+                roomToEnter: roomId
+            }
+        }
+        let initiator = mockGames[roomId].getLeader() as Iplayer
+        enterTheRoomAction(mockParsedDataForEnter, { ...mockWS } as ws, mockRooms, mockGames, mockUsers[mockId + `1`] )
+        startTheGameAction(mockParsedData, mockGames[roomId], initiator, mockRooms[roomId], mockStartedGames)
+        let gameId = mockUsers[mockId].getGameId()
+        let players = mockStartedGames[gameId as string].getPlayers()
+        expect(players[0].inGame()).toBe(true)
+        expect(players[1].inGame()).toBe(true)
+        
     })
 })

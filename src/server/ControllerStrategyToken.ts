@@ -1,18 +1,25 @@
-import { expectedParsedDataType, gamesType, messageFromClientTypes, roomsType, usersType } from "../../types";
+import { expectedParsedDataType, gamesPartiesType, gamesType, messageForSendFromServerEnum, messageFromClientTypes, roomsType, usersType } from "../../types";
 import { IWebSocketMessageController } from "./interface";
 import ws from 'ws'
 import { doRoomAction } from "./actions/doRoomAction";
 import { enterTheRoomAction } from "./actions/enterTheRoomAction";
 import { exitRoomAction } from "./actions/exitRoomAction";
+import { startTheGameAction } from "./actions/startTheGameAction";
+import { IGame } from "../Entities/Game/interface";
+import { Iplayer } from "../Entities/Player/interface";
+import { gameStartedResponseFromServerDataType, webSocketProcedureReportType } from "../Adds/Reports/webSocketReport.type";
+import { webSocketReportMessagesLibrary } from "../consts/webSocketResponseMessage";
+import { gameStartedInfoForResponseCreator } from "../Adds/Reports/webSocketResponseDataCreators";
 
 export class ControllerStrategyToken implements IWebSocketMessageController {
     private parsedData: expectedParsedDataType
     private rooms: roomsType
     private users: usersType
     private id: string
-    private games: gamesType
+    private games: gamesPartiesType
     private webSocket: ws
-    constructor(id: string, parsedData: expectedParsedDataType, rooms: roomsType, users: usersType, games: gamesType, webSocket: ws) {
+    private statedGames: gamesType
+    constructor(id: string, parsedData: expectedParsedDataType, rooms: roomsType, users: usersType, games: gamesPartiesType, webSocket: ws, statedGames: gamesType) {
         this.parsedData = parsedData
         this.rooms = rooms
         // Список всех юзеров с ключами в виде id
@@ -21,6 +28,7 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
         this.id = id
         this.games = games
         this.webSocket = webSocket
+        this.statedGames = statedGames
     }
     execute(): void {
         switch (this.parsedData.type) {
@@ -43,7 +51,30 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
                 break
             }
             case messageFromClientTypes.startTheGame: {
-
+                let roomId = this.users[this.id].getRoomId() as string
+                let initiator = this.games[roomId].getLeader() as Iplayer
+                let process = startTheGameAction(this.parsedData, this.games[roomId],initiator, this.rooms[roomId], this.statedGames)
+                if (process.success){
+                    let currentGame = this.statedGames[this.users[this.id].getGameId() as string]
+                    let gameStartedInfo:gameStartedResponseFromServerDataType = gameStartedInfoForResponseCreator(currentGame, this.games[roomId])
+                    let report: webSocketProcedureReportType<gameStartedResponseFromServerDataType> = {
+                        success: true,
+                        message: webSocketReportMessagesLibrary.gameStartedSuccessfully(),
+                        type: messageForSendFromServerEnum.gameStarted,
+                        data: gameStartedInfo
+                    }
+                    for (let user of this.rooms[roomId]) {
+                        user.getWS()!.send(JSON.stringify(report))
+                    }
+                }
+                else {
+                    let report: webSocketProcedureReportType = {
+                        success: false,
+                        message: webSocketReportMessagesLibrary.gameStartedFailed(),
+                        type: messageForSendFromServerEnum.gameStarted
+                    }
+                    this.webSocket.send(JSON.stringify(report))
+                }
                 break
             }
             default: {

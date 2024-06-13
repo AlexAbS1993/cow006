@@ -2,7 +2,7 @@ import express from "express"
 import cors from 'cors'
 import ws from 'ws'
 import { v4 as uuid } from 'uuid'
-import { clientsType, expectedParsedDataType, gamesType, registrationUserType, roomsType, usersType } from "./types"
+import { clientsType, expectedParsedDataType, gamesPartiesType, gamesType, registrationUserType, roomsType, usersType } from "./types"
 import { WebSocketMessageController } from "./src/server/ControllerStrategy"
 import { ControllerStrategyWithoutToken } from "./src/server/ControllerStrategyWithoutToken"
 import { ControllerWrongTokenStrategy } from "./src/server/ControllerWrongTokenStrategy"
@@ -14,7 +14,8 @@ const webSocketServer = new ws.WebSocketServer({ port: 5000 })
 const clients: clientsType = {}
 const rooms: roomsType = {}
 const users: usersType = {}
-const games: gamesType = {}
+const gamesParties: gamesPartiesType = {}
+const games:gamesType = {}
 const registrationUsers: registrationUserType = {}
 const secretkey = 'verysecretkey'
 
@@ -52,9 +53,15 @@ webSocketServer.on('connection', (webSocket) => {
         }
         users[id].setCurrentWebSocket(webSocket)
         // Возможно стоит передавать просто user, а не всех юзеров
-        messageController.defineStrategy(new ControllerStrategyToken(id, parsedData, rooms, users, games, webSocket))
-        messageController.execute()
-        return
+        if(!users[id].inGame()){
+            messageController.defineStrategy(new ControllerStrategyToken(id, parsedData, rooms, users, gamesParties, webSocket, games))
+            messageController.execute()
+            return
+        }
+        else {
+
+            return
+        }
     })
     webSocket.on("close", () => {
         delete clients[idWS]

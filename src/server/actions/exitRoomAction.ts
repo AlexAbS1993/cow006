@@ -1,4 +1,4 @@
-import { exitRoomMessageType, gamesType, messageForSendFromServerEnum, roomsType } from "../../../types"
+import { exitRoomMessageType, gamesPartiesType, messageForSendFromServerEnum, roomsType } from "../../../types"
 import ws from 'ws'
 import { reportMessagesLibrary } from "../../consts/reportMessages"
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type"
@@ -6,7 +6,7 @@ import { webSocketReportMessagesLibrary } from "../../consts/webSocketResponseMe
 import { webSocketProcedureReportType } from "../../Adds/Reports/webSocketReport.type"
 import { IUser } from "../entities/user/interface"
 
-export function exitRoomAction(parsedData: exitRoomMessageType, rooms: roomsType, webSocket: ws, user: IUser, games: gamesType): procedureReportType<null> {
+export function exitRoomAction(parsedData: exitRoomMessageType, rooms: roomsType, webSocket: ws, user: IUser, games: gamesPartiesType): procedureReportType<null> {
     const desiredRoom = parsedData.data.roomFrom
     if (rooms[desiredRoom]) {
         let usersSocket = webSocket

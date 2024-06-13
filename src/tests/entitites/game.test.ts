@@ -13,8 +13,9 @@ import { howBadPoints } from '../../Instruments/Creators/CardList.creator';
 import { IPool } from '../../Entities/Pool/interface';
 import { resultEndGameType } from '../../Entities/Game/interface';
 import { Game } from '../../Entities/Game/model';
-import { GameMods } from '../../consts/rules';
+import { GameMods, GameStates } from '../../consts/rules';
 import { procedureReportType } from '../../Adds/Reports/procedureReport.type';
+import { reportMessagesLibrary } from '../../consts/reportMessages';
 
 describe("Сущность Game хранит в себе все данные о текущей партии. В неё будет включен список игроков \
 колода и игровые полосы, заполняемые по особым правилам", () => {
@@ -185,5 +186,58 @@ describe("Сущность Game хранит в себе все данные о 
                 expect(result[playerStat].winner).toBe(true)
             }
         }
+    })
+    test("При передаче из Pool в Row карта удаляется из hand игрока", () => {
+        classicGame.prepare()
+        let randomPlayersCard = classicGame.getPlayers()[0].getHand().__getHand()[0]
+        let randomPlayers2Card = classicGame.getPlayers()[1].getHand().__getHand()[0]
+        let row1 = new Row(new Card(5, 1))
+        let row2 = new Row(new Card(25, howBadPoints(25)))
+        let row3 = new Row(new Card(55, howBadPoints(55)))
+        let row4 = new Row(new Card(88, howBadPoints(88)))
+        classicGame.__fakeRowsCreate([row4, row2, row3, row1])
+        classicGame.addToPool(randomPlayersCard, classicGame.getPlayers()[0])
+        classicGame.addToPool(randomPlayers2Card, classicGame.getPlayers()[1])
+        expect(classicGame.getGameState()).toBe(GameStates.checking)
+        let result1 = classicGame.fromPoolToRow()
+        if (result1.message === reportMessagesLibrary.game.needToSelect){
+            classicGame.fromPoolToRowWithSelect(0)
+        }
+        let result2 = classicGame.fromPoolToRow()
+        if (result2.message === reportMessagesLibrary.game.needToSelect){
+            classicGame.fromPoolToRowWithSelect(0)
+        }
+        expect(classicGame.getGameState()).toBe(GameStates.process)
+        expect(classicGame.getPlayers()[0].cardsCount()).toBe(9)
+        expect(classicGame.getPlayers()[1].cardsCount()).toBe(9)
+    })
+    describe("Game правильно работает при нескольких сценариях", () => {
+        test("Правильно заменяет выбранную линию", () => {
+            classicGame.prepare()
+            let row1 = new Row(new Card(5, 1))
+            let row2 = new Row(new Card(25, howBadPoints(25)))
+            let row3 = new Row(new Card(55, howBadPoints(55)))
+            let row4 = new Row(new Card(88, howBadPoints(88)))
+            classicGame.__fakeRowsCreate([row4, row2, row3, row1])
+            classicGame.addToPool(new Card(4, howBadPoints(4)), mockPlayer)
+            classicGame.addToPool(new Card(3, howBadPoints(3)), mockPlayer2)
+            let result = classicGame.fromPoolToRow()
+            expect(result.success).toBe(false)
+            expect(result.message).toBe(reportMessagesLibrary.game.needToSelect)
+            let selectedResult = classicGame.fromPoolToRowWithSelect(0)
+            expect(selectedResult.success).toBe(true)
+            expect(classicGame.getRows()[0].countOfCards()).toBe(1)
+            expect(classicGame.getRows()[0].getRow()[0]?.getNominal()).toBe(3)
+            expect(classicGame.getPlayers()[1].getPenaltySet().getCountOfCard()).toBe(1)
+            expect(classicGame.getPlayers()[1].getPenaltySet().getPenaltyResult()).toBe(howBadPoints(88))
+            let result2 = classicGame.fromPoolToRow()
+            expect(result2.success).toBe(true)
+            expect(result2.message).toBe(reportMessagesLibrary.ok.okMessage)
+            expect(classicGame.getGameState()).toBe(GameStates.process)
+            expect(classicGame.getRows()[0].countOfCards()).toBe(2)
+        })
+    test("", () => {
+        
+    })
     })
 })

@@ -1,4 +1,4 @@
-import { messageForSendFromServerEnum, theGameStartType } from "../../../types";
+import { gamesType, messageForSendFromServerEnum, theGameStartType } from "../../../types";
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { webSocketProcedureReportType } from "../../Adds/Reports/webSocketReport.type";
 import { IgameParty } from "../../Entities/GameParty/interface";
@@ -7,15 +7,11 @@ import { reportMessagesLibrary } from "../../consts/reportMessages";
 import { webSocketReportMessagesLibrary } from "../../consts/webSocketResponseMessage";
 import ws from 'ws'
 import { IUser } from "../entities/user/interface";
+import {v4 as uuid} from 'uuid'
+import { Game } from "../../Entities/Game/model";
 
-export function startTheGameAction(parsedData: theGameStartType, game: IgameParty, initiator: Iplayer, webSocket: ws, room: IUser[]): procedureReportType<null> {
-    if (initiator.getId() !== game.getLeader()!.getId()) {
-        let report: webSocketProcedureReportType = {
-            success: false,
-            message: webSocketReportMessagesLibrary.gameStartedFailed(),
-            type: messageForSendFromServerEnum.gameStarted
-        }
-        webSocket.send(JSON.stringify(report))
+export function startTheGameAction(parsedData: theGameStartType, gameParty: IgameParty, initiator: Iplayer, room: IUser[], games: gamesType): procedureReportType<null> {
+    if (initiator.getId() !== gameParty.getLeader()!.getId()) {
         return {
             success: false,
             instance: null,
@@ -23,15 +19,16 @@ export function startTheGameAction(parsedData: theGameStartType, game: IgamePart
         }
     }
     else {
-        game.setGameStarted()
-
-        let report: webSocketProcedureReportType = {
-            success: true,
-            message: webSocketReportMessagesLibrary.gameStartedSuccessfully(),
-            type: messageForSendFromServerEnum.gameStarted
+        gameParty.setGameStarted()
+        let gameId = uuid()
+        games[gameId] = new Game(gameId, parsedData.data.mode, gameParty)
+        games[gameId].prepare()
+        for (let player of gameParty.getPlayers()){
+            player.setInGame(true)
         }
-        for (let user of room) {
-            user.getWS()!.send(JSON.stringify(report))
+        for (let user of room){
+            user.setGameId(gameId)
+            user.setInGame(true)
         }
         return {
             success: true,

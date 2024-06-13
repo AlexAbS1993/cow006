@@ -8,12 +8,20 @@ export class User implements IUser {
     private webSocket: ws | null
     private roomId: string | null
     private inGameStatus: boolean
+    private gameId: string| null
     constructor(id: string, name: string) {
         this.id = id
         this.name = name
         this.webSocket = null
         this.roomId = null
         this.inGameStatus = false
+        this.gameId = null
+    }
+    setGameId(id: string): void {
+        this.gameId = id
+    }
+    getGameId(): string|null {
+        return this.gameId
     }
     setCurrentWebSocket(ws: ws): void {
         this.webSocket = ws

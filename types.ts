@@ -2,6 +2,7 @@ import ws from 'ws'
 import { IgameParty } from './src/Entities/GameParty/interface'
 import { GameMods } from './src/consts/rules'
 import { IUser } from './src/server/entities/user/interface'
+import { IGame } from './src/Entities/Game/interface'
 
 export type clientsType = {
     [key: string]: ws
@@ -112,6 +113,10 @@ export type exitFromRoom = {
     roomFrom: string
 }
 
-export type gamesType = {
+export type gamesPartiesType = {
     [key: string]: IgameParty
+}
+
+export type gamesType = {
+    [key: string]: IGame
 }

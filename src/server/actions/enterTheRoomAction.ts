@@ -1,4 +1,4 @@
-import { enterTheRoomMessageType, gamesType, messageForSendFromServerEnum, roomsType } from "../../../types"
+import { enterTheRoomMessageType, gamesPartiesType, messageForSendFromServerEnum, roomsType } from "../../../types"
 import ws from "ws"
 import { reportMessagesLibrary } from "../../consts/reportMessages"
 import { webSocketProcedureReportType } from "../../Adds/Reports/webSocketReport.type"
@@ -9,7 +9,7 @@ import { Player } from "../../Entities/Player/model"
 import { IUser } from "../entities/user/interface"
 
 
-export function enterTheRoomAction(parsedData: enterTheRoomMessageType, ws: ws, rooms: roomsType, games: gamesType, user: IUser): procedureReportType<null> {
+export function enterTheRoomAction(parsedData: enterTheRoomMessageType, ws: ws, rooms: roomsType, games: gamesPartiesType, user: IUser): procedureReportType<null> {
     const desiredRoom = parsedData.data.roomToEnter
     if (rooms[desiredRoom]) {
         if (!games[desiredRoom].isGameStarted() && !games[desiredRoom].isPartyFull()) {
@@ -34,8 +34,7 @@ export function enterTheRoomAction(parsedData: enterTheRoomMessageType, ws: ws, 
                     client.getWS()!.send(JSON.stringify(report))
                 }
             }
-            newPlayer.setInGame(true)
-            user.setInGame(true)
+            user.setRoom(desiredRoom)
             return {
                 success: true,
                 message: reportMessagesLibrary.ok.okMessage,

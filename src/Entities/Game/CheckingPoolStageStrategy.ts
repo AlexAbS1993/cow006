@@ -26,6 +26,9 @@ export class CheckingPooStateStrategy implements IStateForGame {
         this.poolsCellNeedToSelect = -1
         this.poolIndexFlagToCheck = 0
     }
+    isNextStepAllowed(){
+        return this.pool.getPool().length <= this.poolIndexFlagToCheck
+    }
     nextStepOfState() {
         if (this.pool.getPool().length <= this.poolIndexFlagToCheck) {
             this.pool.clear()
@@ -92,6 +95,7 @@ export class CheckingPooStateStrategy implements IStateForGame {
             }
         }
         this.rows[indexRow].addCard(checkedCardFromPool.card,checkedCardFromPool.player)
+        checkedCardFromPool.player.discardCardFromHand(checkedCardFromPool.card.getNominal())
         this.poolIndexFlagToCheck++
         // Проверка: закончилась ли стадия распределения для перехода к стадии процесса
         this.nextStepOfState()
@@ -104,6 +108,7 @@ export class CheckingPooStateStrategy implements IStateForGame {
     fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame> {
         let checkedCardFromPool = this.pool.getPool()[this.poolIndexFlagToCheck]
         this.rows[rowIndex].replace(checkedCardFromPool.card, checkedCardFromPool.player)
+        checkedCardFromPool.player.discardCardFromHand(checkedCardFromPool.card.getNominal())
         this.poolIndexFlagToCheck++
         this.needToSelect = false
         this.poolsCellNeedToSelect = -1

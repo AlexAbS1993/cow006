@@ -49,6 +49,7 @@ export class Hand implements Ihand {
             message: reportMessagesLibrary.ok.okMessage
         }
         }
+        
         // Только для тестирования!!!
     __getHand(){
             return this.hand
