@@ -40,7 +40,8 @@ export enum messageForSendFromServerEnum {
     "successLogIn" = "successLogIn",
     "alreadyRegistred" = "alreadyRegistred",
     "successRegistred" = "successRegistred",
-    "gameStarted" = "gameStarted"
+    "gameStarted" = "gameStarted",
+    "roomCreated" = "roomCreated"
 }
 
 export enum messageFromClientTypes {

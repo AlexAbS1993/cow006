@@ -1,6 +1,6 @@
 import { GameParty } from "../../Entities/GameParty/model"
 import { Player } from "../../Entities/Player/model"
-import { reportMessagesLibrary } from "../../consts/reportMessages"
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages"
 import { playersIdGenerator } from "./helpers/playersIdGenerator"
 import { playersInfoGenerator } from "./helpers/playersInfoGenerator"
 

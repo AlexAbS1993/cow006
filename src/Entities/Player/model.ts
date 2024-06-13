@@ -1,5 +1,5 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
-import { reportMessagesLibrary } from "../../consts/reportMessages";
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
 import { IgameParty } from "../GameParty/interface";
 import { Ihand } from "../Hand/interface";
 import { Hand } from "../Hand/model";

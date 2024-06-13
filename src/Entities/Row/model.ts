@@ -1,5 +1,5 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
-import { reportMessagesLibrary, reportMessagesLibraryType } from "../../consts/reportMessages";
+import { reportMessagesLibrary, reportMessagesLibraryType } from "../../Adds/Reports/reportMessages";
 import { Icard } from "../Card/interface";
 import { Iplayer } from "../Player/interface";
 import { IRow, cellsInfoType } from "./interface";

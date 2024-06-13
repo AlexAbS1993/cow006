@@ -5,7 +5,7 @@ import { Player } from "../../Entities/Player/model"
 import { playersInfoGenerator } from "../entitites/helpers/playersInfoGenerator"
 import { playersIdGenerator } from "../entitites/helpers/playersIdGenerator"
 import { GameParty } from "../../Entities/GameParty/model"
-import { gameStartedInfoForResponseCreator } from "../../Adds/Reports/webSocketResponseDataCreators"
+import { gameStartedInfoForResponseCreator } from "../../Adds/Reports/webSocketResponseDataCreators/gameStartedInfoForResponseCreator"
 
 describe("Функция ResponseDataCreator создаёт специальный объект для будущей отправки через web socket", () => {
     let gameId = uuid()

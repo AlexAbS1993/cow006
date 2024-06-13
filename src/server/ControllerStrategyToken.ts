@@ -7,9 +7,11 @@ import { exitRoomAction } from "./actions/exitRoomAction";
 import { startTheGameAction } from "./actions/startTheGameAction";
 import { IGame } from "../Entities/Game/interface";
 import { Iplayer } from "../Entities/Player/interface";
-import { gameStartedResponseFromServerDataType, webSocketProcedureReportType } from "../Adds/Reports/webSocketReport.type";
-import { webSocketReportMessagesLibrary } from "../consts/webSocketResponseMessage";
-import { gameStartedInfoForResponseCreator } from "../Adds/Reports/webSocketResponseDataCreators";
+import { gameStartedResponseFromServerDataType, roomCreatedResponseFromServerDataType, webSocketProcedureReportType } from "../Adds/Reports/webSocketReport.type";
+import { webSocketReportMessagesLibrary } from "../Adds/Reports/webSocketResponseMessage";
+import { gameStartedInfoForResponseCreator } from "../Adds/Reports/webSocketResponseDataCreators/gameStartedInfoForResponseCreator";
+import { roomCreatedForResponse } from "../Adds/Reports/webSocketResponseDataCreators/roomCreatedForResponse";
+import { IUser } from "./entities/user/interface";
 
 export class ControllerStrategyToken implements IWebSocketMessageController {
     private parsedData: expectedParsedDataType
@@ -19,6 +21,7 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
     private games: gamesPartiesType
     private webSocket: ws
     private statedGames: gamesType
+    private currentUser: IUser
     constructor(id: string, parsedData: expectedParsedDataType, rooms: roomsType, users: usersType, games: gamesPartiesType, webSocket: ws, statedGames: gamesType) {
         this.parsedData = parsedData
         this.rooms = rooms
@@ -29,11 +32,22 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
         this.games = games
         this.webSocket = webSocket
         this.statedGames = statedGames
+        this.currentUser = users[id]
     }
     execute(): void {
         switch (this.parsedData.type) {
             case messageFromClientTypes.doRoomCreate: {
-                doRoomAction(this.rooms, this.users[this.id], this.games)
+                let doRoomResult = doRoomAction(this.rooms, this.currentUser, this.games)
+                if (doRoomResult.success){
+                    let reportData = roomCreatedForResponse(this.currentUser)
+                    let report: webSocketProcedureReportType<roomCreatedResponseFromServerDataType> = {
+                        success: false,
+                        message: webSocketReportMessagesLibrary.roomCreated(reportData.roomId),
+                        type: messageForSendFromServerEnum.roomCreated,
+                        data: reportData
+                    }
+                    this.webSocket.send(JSON.stringify(report))
+                }
                 break
             }
             case messageFromClientTypes.enterTheRoom: {
@@ -56,6 +70,7 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
                 let process = startTheGameAction(this.parsedData, this.games[roomId],initiator, this.rooms[roomId], this.statedGames)
                 if (process.success){
                     let currentGame = this.statedGames[this.users[this.id].getGameId() as string]
+                    // Формирование файла для отчёта по web-socket
                     let gameStartedInfo:gameStartedResponseFromServerDataType = gameStartedInfoForResponseCreator(currentGame, this.games[roomId])
                     let report: webSocketProcedureReportType<gameStartedResponseFromServerDataType> = {
                         success: true,
@@ -63,6 +78,7 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
                         type: messageForSendFromServerEnum.gameStarted,
                         data: gameStartedInfo
                     }
+                    // Отправка сообщения о начале игры всем участникам комнаты
                     for (let user of this.rooms[roomId]) {
                         user.getWS()!.send(JSON.stringify(report))
                     }

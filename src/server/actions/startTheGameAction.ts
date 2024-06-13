@@ -3,8 +3,8 @@ import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { webSocketProcedureReportType } from "../../Adds/Reports/webSocketReport.type";
 import { IgameParty } from "../../Entities/GameParty/interface";
 import { Iplayer } from "../../Entities/Player/interface";
-import { reportMessagesLibrary } from "../../consts/reportMessages";
-import { webSocketReportMessagesLibrary } from "../../consts/webSocketResponseMessage";
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
+import { webSocketReportMessagesLibrary } from "../../Adds/Reports/webSocketResponseMessage";
 import ws from 'ws'
 import { IUser } from "../entities/user/interface";
 import {v4 as uuid} from 'uuid'

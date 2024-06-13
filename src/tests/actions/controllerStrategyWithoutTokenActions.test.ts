@@ -4,7 +4,7 @@ import ws from 'ws'
 import { createHmac } from 'node:crypto';
 import { registrationAction } from "../../server/actions/registrationAction"
 import { logInAction } from "../../server/actions/logInAction";
-import { reportMessagesLibrary } from "../../consts/reportMessages";
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
 describe("Testing action strategy without token in message", () => {
     let mockId = uuid()
     let mockWS = {

@@ -1,6 +1,6 @@
-import { IGame } from "../../Entities/Game/interface";
-import { IgameParty } from "../../Entities/GameParty/interface";
-import { gameStartedResponseFromServerDataType, handDataForResponsFromServerDataType, playersDataForResponseFromServerDataType, rowsDataForResponseFromServerDataType } from "./webSocketReport.type";
+import { IGame } from "../../../Entities/Game/interface";
+import { IgameParty } from "../../../Entities/GameParty/interface";
+import { gameStartedResponseFromServerDataType, handDataForResponsFromServerDataType, playersDataForResponseFromServerDataType, rowsDataForResponseFromServerDataType } from "../webSocketReport.type";
 
 export function gameStartedInfoForResponseCreator(currentGame: IGame, gameParty: IgameParty): gameStartedResponseFromServerDataType{
     let players: playersDataForResponseFromServerDataType[] = []

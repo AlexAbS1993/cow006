@@ -10,5 +10,6 @@ export const webSocketReportMessagesLibrary = {
     alreadyRegistred: () => "Пользоавтель с таким логином уже зарегистрирован",
     successRegistred: () => "Успешно зарегистрирован",
     gameStartedFailed: () => "Игру не удалось начать, вы не являетесь лидером",
-    gameStartedSuccessfully: () => "Игра стартовала успешно"
+    gameStartedSuccessfully: () => "Игра стартовала успешно",
+    roomCreated: (roomId: string) => `Комнтана ${roomId} успешна создана. Вы её лидер`
 }

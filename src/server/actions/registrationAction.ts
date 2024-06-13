@@ -2,7 +2,7 @@ import { createHmac } from 'node:crypto';
 import { messageForSendFromServerEnum, registrateDataType, registrationUserType } from '../../../types';
 import ws from 'ws'
 import { webSocketProcedureReportType } from '../../Adds/Reports/webSocketReport.type';
-import { webSocketReportMessagesLibrary } from '../../consts/webSocketResponseMessage';
+import { webSocketReportMessagesLibrary } from '../../Adds/Reports/webSocketResponseMessage';
 
 export function registrationAction(parsedData: registrateDataType, secretKey: string, registrationUsers: registrationUserType, webSocket: ws, wsId: string) {
     const { login, password } = parsedData.data

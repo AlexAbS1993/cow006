@@ -1,5 +1,5 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
-import { reportMessagesLibrary } from "../../consts/reportMessages";
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
 import { Icard } from "../Card/interface";
 import { Iplayer } from "../Player/interface";
 import { IPool, poolCellType } from "./interface";

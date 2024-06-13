@@ -1,5 +1,5 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
-import { reportMessagesLibrary } from "../../consts/reportMessages";
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
 import { gameRules } from "../../consts/rules";
 import { Iplayer } from "../Player/interface";
 import { IgameParty } from "./interface";

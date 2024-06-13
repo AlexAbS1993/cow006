@@ -2,7 +2,7 @@ import { Player } from "../../Entities/Player/model"
 import { IPool } from "../../Entities/Pool/interface"
 import { Pool } from "../../Entities/Pool/model"
 import { cardListCreator } from "../../Instruments/Creators/CardList.creator"
-import { reportMessagesLibrary } from "../../consts/reportMessages"
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages"
 import { playersIdGenerator } from "./helpers/playersIdGenerator"
 import { playersInfoGenerator } from "./helpers/playersInfoGenerator"
 

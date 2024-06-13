@@ -1,6 +1,6 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { cardListCreator } from "../../Instruments/Creators/CardList.creator";
-import { reportMessagesLibrary } from "../../consts/reportMessages";
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
 import { GameMods, GameStates, GameSteps } from "../../consts/rules";
 import { Icard } from "../Card/interface";
 import { IgameParty } from "../GameParty/interface";

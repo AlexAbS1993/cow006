@@ -1,7 +1,7 @@
 import { Icard } from "../Card/interface";
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { Ihand } from "./interface";
-import { reportMessagesLibrary } from "../../consts/reportMessages";
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
 
 export class Hand implements Ihand {
     private limit: number;

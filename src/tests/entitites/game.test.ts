@@ -15,7 +15,7 @@ import { resultEndGameType } from '../../Entities/Game/interface';
 import { Game } from '../../Entities/Game/model';
 import { GameMods, GameStates } from '../../consts/rules';
 import { procedureReportType } from '../../Adds/Reports/procedureReport.type';
-import { reportMessagesLibrary } from '../../consts/reportMessages';
+import { reportMessagesLibrary } from '../../Adds/Reports/reportMessages';
 
 describe("Сущность Game хранит в себе все данные о текущей партии. В неё будет включен список игроков \
 колода и игровые полосы, заполняемые по особым правилам", () => {

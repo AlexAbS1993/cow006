@@ -1,6 +1,6 @@
 import { Card } from "../../Entities/Card/model"
 import { Hand } from "../../Entities/Hand/model"
-import { reportMessagesLibrary } from "../../consts/reportMessages"
+import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages"
 const cardsLimitInHand = 10
 
 describe("A Hand is a players cards in a game. It must discard and get ones",() => {

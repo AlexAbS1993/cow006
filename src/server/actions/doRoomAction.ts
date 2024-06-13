@@ -4,7 +4,7 @@ import { roomsType } from '../../../types'
 import { GameParty } from '../../Entities/GameParty/model'
 import { playerInfoType } from '../../Entities/Player/interface'
 import { Player } from '../../Entities/Player/model'
-import { reportMessagesLibrary } from '../../consts/reportMessages';
+import { reportMessagesLibrary } from '../../Adds/Reports/reportMessages';
 import { procedureReportType } from '../../Adds/Reports/procedureReport.type';
 import { IUser } from '../entities/user/interface';
 

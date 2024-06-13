@@ -29,3 +29,6 @@ export type gameStartedResponseFromServerDataType = {
     players: playersDataForResponseFromServerDataType[],
     rows:rowsDataForResponseFromServerDataType[]
 }
+export type roomCreatedResponseFromServerDataType = {
+    roomId: string
+}

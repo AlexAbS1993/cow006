@@ -1,4 +1,4 @@
-import { reportMessagesLibraryType } from "../../consts/reportMessages"
+import { reportMessagesLibraryType } from "./reportMessages"
 
 export type procedureReportType<Instance> = {
     success: boolean,
