@@ -5,13 +5,14 @@ import { doRoomAction } from "./actions/doRoomAction";
 import { enterTheRoomAction } from "./actions/enterTheRoomAction";
 import { exitRoomAction } from "./actions/exitRoomAction";
 import { startTheGameAction } from "./actions/startTheGameAction";
-import { IGame } from "../Entities/Game/interface";
 import { Iplayer } from "../Entities/Player/interface";
-import { gameStartedResponseFromServerDataType, roomCreatedResponseFromServerDataType, webSocketProcedureReportType } from "../Adds/Reports/webSocketReport.type";
+import { gameStartedResponseFromServerDataType, roomCreatedResponseFromServerDataType, roomEnterResponseFromServerDataType, webSocketProcedureReportType } from "../Adds/Reports/webSocketReport.type";
 import { webSocketReportMessagesLibrary } from "../Adds/Reports/webSocketResponseMessage";
 import { gameStartedInfoForResponseCreator } from "../Adds/Reports/webSocketResponseDataCreators/gameStartedInfoForResponseCreator";
-import { roomCreatedForResponse } from "../Adds/Reports/webSocketResponseDataCreators/roomCreatedForResponse";
+import { roomCreatedForResponseCreator } from "../Adds/Reports/webSocketResponseDataCreators/roomCreatedForResponse";
 import { IUser } from "./entities/user/interface";
+import { roomEnterResponseDataCreator } from "../Adds/Reports/webSocketResponseDataCreators/roomEnterForResponse";
+import { reportMessagesLibrary } from "../Adds/Reports/reportMessages";
 
 export class ControllerStrategyToken implements IWebSocketMessageController {
     private parsedData: expectedParsedDataType
@@ -39,9 +40,9 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
             case messageFromClientTypes.doRoomCreate: {
                 let doRoomResult = doRoomAction(this.rooms, this.currentUser, this.games)
                 if (doRoomResult.success){
-                    let reportData = roomCreatedForResponse(this.currentUser)
+                    let reportData = roomCreatedForResponseCreator(this.currentUser)
                     let report: webSocketProcedureReportType<roomCreatedResponseFromServerDataType> = {
-                        success: false,
+                        success: true,
                         message: webSocketReportMessagesLibrary.roomCreated(reportData.roomId),
                         type: messageForSendFromServerEnum.roomCreated,
                         data: reportData
@@ -51,7 +52,42 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
                 break
             }
             case messageFromClientTypes.enterTheRoom: {
-                enterTheRoomAction(this.parsedData, this.webSocket, this.rooms, this.games, this.users[this.id])
+                let enterTheRoomResult = enterTheRoomAction(this.parsedData.data.roomToEnter, this.webSocket, this.rooms, this.games, this.users[this.id])
+                if (enterTheRoomResult.success){
+                    let roomId = this.currentUser.getRoomId() as string
+                    let reportData = roomEnterResponseDataCreator(roomId, this.rooms[roomId])
+                    let report: webSocketProcedureReportType<roomEnterResponseFromServerDataType> = {
+                        success: true,
+                        message: webSocketReportMessagesLibrary.userConnected(this.currentUser.getName()),
+                        type: messageForSendFromServerEnum.userConnectToRoom,
+                        data: reportData
+                    }
+                    for (let user of this.rooms[roomId as string]){
+                        user.getWS()!.send(JSON.stringify(report))
+                    }
+                }
+                else {
+                    let report: webSocketProcedureReportType = {} as webSocketProcedureReportType
+                    switch(enterTheRoomResult.message){
+                        case reportMessagesLibrary.server.gameIsAlreadyStarted: {
+                            report = {
+                                success: false,
+                                message: webSocketReportMessagesLibrary.gameHasBeenStartedAlready(),
+                                type: messageForSendFromServerEnum.canNotEnterTheRoom
+                            }
+                            break
+                        }
+                        case reportMessagesLibrary.server.userAlreadyInRoom: {
+                            report = {
+                                success: false,
+                                message: webSocketReportMessagesLibrary.gameHasBeenStartedAlready(),
+                                type: messageForSendFromServerEnum.canNotEnterTheRoom
+                            }
+                        }
+                    }
+                    
+                    this.webSocket.send(JSON.stringify(report))
+                }
                 break
             }
             case messageFromClientTypes.setName: {
@@ -61,7 +97,18 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
                 break
             }
             case messageFromClientTypes.exitTheRoom: {
-                exitRoomAction(this.parsedData, this.rooms, this.webSocket, this.users[this.id], this.games)
+                let resultOfExit = exitRoomAction(this.parsedData, this.rooms, this.webSocket, this.users[this.id], this.games)
+                if (resultOfExit.success){
+                    let report: webSocketProcedureReportType = {
+                        success: true,
+                        message: webSocketReportMessagesLibrary.userHasBeenLeaved(this.currentUser.getName() as string),
+                        type: messageForSendFromServerEnum.userHasBeenLeave
+                    }
+                    this.webSocket.send(JSON.stringify(report))
+                    for (let client of this.rooms[this.parsedData.data.roomFrom]) {
+                        client.getWS()!.send(JSON.stringify(report))
+                    }
+                }
                 break
             }
             case messageFromClientTypes.startTheGame: {

@@ -6,7 +6,7 @@ import { Icard } from "../Card/interface";
 import { IgameParty } from "../GameParty/interface";
 import { Hand } from "../Hand/model";
 import { Iplayer } from "../Player/interface";
-import { IPool } from "../Pool/interface";
+import { IPool, poolCellType } from "../Pool/interface";
 import { Pool } from "../Pool/model";
 import { IRow } from "../Row/interface";
 import { Istuff } from "../Stuff/interface";
@@ -59,6 +59,9 @@ export class Game implements IGame {
         this.rows = []
         // Определяется пул сыгранных карт по количеству игроков
         this.pool = new Pool(party.getPlayers().length)
+    }
+    getPoolingCell(): poolCellType | procedureReportType<IGame>{
+        return this.stateStrategy.getPoolingCell()
     }
     
     fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame> {

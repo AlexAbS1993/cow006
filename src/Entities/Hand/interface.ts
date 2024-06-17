@@ -5,5 +5,6 @@ export interface Ihand{
     addCard(card: Icard): procedureReportType<Ihand>
     discard(nO:number): procedureReportType<Ihand>
     countOfCards(): number
+    getCard(nO: number): Icard | null
     __getHand(): Icard[]
 }

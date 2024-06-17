@@ -1,5 +1,6 @@
 import { Icard } from "../../Entities/Card/interface"
 import { Card } from "../../Entities/Card/model"
+import { GameParty } from "../../Entities/GameParty/model"
 import { Hand } from "../../Entities/Hand/model"
 import { playerInfoType } from "../../Entities/Player/interface"
 import { Player } from "../../Entities/Player/model"
@@ -63,5 +64,14 @@ describe("Player is a important part of the game. It has hand, info and gameInfo
         expect(player.getPenaltySet()).toBeDefined()
         expect(player.howPenaltyPoints()).toBe(0)
     })
-    // Тестирование об игровой информации не реализовано до создания сущности по Игре
+    test("У игрока есть информация об игре. Если игрок вне игры, возвращается null", () => {
+        expect(player.getGameInfo()).toBeNull()
+        let gp = new GameParty('1111')
+        player.defineGameInfo(gp)
+        gp.addPlayer(player)
+        let gameInfo = player.getGameInfo()
+        expect(gameInfo).toBeDefined()
+        expect(gameInfo!.gameId).toBe('1111')
+        expect(gameInfo!.players.length).toBe(1)
+    })
 })

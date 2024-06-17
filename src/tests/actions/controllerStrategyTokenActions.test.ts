@@ -57,7 +57,7 @@ describe("CSTactions is a procedure for executing operation by parsedData 'type'
         for (let game in mockGames) {
             mockParsedData.data.roomToEnter = mockGames[game].getGPid()
         }
-        enterTheRoomAction(mockParsedData, mockWS, mockRooms, mockGames, mockUsers[mockId + "1"])
+        enterTheRoomAction(mockParsedData.data.roomToEnter, mockWS, mockRooms, mockGames, mockUsers[mockId + "1"])
         for (let room in mockRooms) {
             expect(mockRooms[room][1].getName()).toBe("Valya")
             expect(mockRooms[room][0].getName()).toBe("Alex")
@@ -101,7 +101,7 @@ describe("CSTactions is a procedure for executing operation by parsedData 'type'
             }
         }
         let initiator = mockGames[roomId].getLeader() as Iplayer
-        enterTheRoomAction(mockParsedDataForEnter, { ...mockWS } as ws, mockRooms, mockGames, mockUsers[mockId + `1`] )
+        enterTheRoomAction(roomId, { ...mockWS } as ws, mockRooms, mockGames, mockUsers[mockId + `1`] )
         startTheGameAction(mockParsedData, mockGames[roomId], initiator, mockRooms[roomId], mockStartedGames)
         let gameId = mockUsers[mockId].getGameId()
         let players = mockStartedGames[gameId as string].getPlayers()

@@ -1,5 +1,3 @@
-import e from "express"
-
 export const gameRules = {
     maximumPlayers: 4,
     minReadyToStartPlayers: 2

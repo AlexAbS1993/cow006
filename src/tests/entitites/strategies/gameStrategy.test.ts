@@ -10,6 +10,8 @@ import { reportMessagesLibrary } from '../../../Adds/Reports/reportMessages'
 import { ProcessGameStrategy } from '../../../Entities/Game/ProcessGameStateStrategy'
 import { Card } from '../../../Entities/Card/model'
 import { howBadPoints } from '../../../Instruments/Creators/CardList.creator'
+import { Icard } from '../../../Entities/Card/interface'
+import { Iplayer } from '../../../Entities/Player/interface'
 
 describe("Игровые стратегии заменяют друг друга для правильной работы методов", () => {
     let mockId = uuid()
@@ -49,5 +51,14 @@ describe("Игровые стратегии заменяют друг друга
         let wrongResult = processState.addToPool(card2, mockPlayer2)
         expect(wrongResult.success).toBe(false)
         expect(classicGame.getGameState()).toBe(GameStates.checking)
+    })
+    test("EndGameStrategy возвращает отчёт и не работает с другими методами", () => {
+        classicGame.__fakeEndGame()
+        expect(classicGame.fromPoolToRow().success).toBe(false)
+        expect(classicGame.fromPoolToRowWithSelect(1).success).toBe(false)
+        expect(classicGame.prepare().success).toBe(false)
+        expect(classicGame.addToPool({} as Icard, {} as Iplayer).success).toBe(false)
+        expect(classicGame.getEndsResult()).toBeDefined()
+        expect(classicGame.getEndsResult()[mockPlayer.getId()].name).toBe(mockPlayer.getInfo().name)
     })
 })

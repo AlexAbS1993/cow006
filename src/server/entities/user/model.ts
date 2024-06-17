@@ -9,7 +9,9 @@ export class User implements IUser {
     private roomId: string | null
     private inGameStatus: boolean
     private gameId: string| null
+    private wsId: string | null
     constructor(id: string, name: string) {
+        this.wsId  = null
         this.id = id
         this.name = name
         this.webSocket = null
@@ -22,6 +24,13 @@ export class User implements IUser {
     }
     getGameId(): string|null {
         return this.gameId
+    }
+    setWSId(id: string){
+        this.wsId = id
+        return
+    }
+    getWSId():string|null{
+        return this.wsId
     }
     setCurrentWebSocket(ws: ws): void {
         this.webSocket = ws
@@ -47,7 +56,7 @@ export class User implements IUser {
         this.inGameStatus = value
         return
     }
-    setRoom(roomId: string): void {
+    setRoom(roomId: string|null): void {
         this.roomId = roomId
         return
     }

@@ -1,4 +1,4 @@
-import { roomCreatedForResponse } from "../../Adds/Reports/webSocketResponseDataCreators/roomCreatedForResponse"
+import { roomCreatedForResponseCreator } from "../../Adds/Reports/webSocketResponseDataCreators/roomCreatedForResponse"
 import { User } from "../../server/entities/user/model"
 import {v4} from 'uuid'
 
@@ -6,7 +6,7 @@ describe("Функция создаёт объект с идентификато
     let user = new User(v4(), "Alex")
     let roomId = v4()
     user.setRoom(roomId)
-    let reportData = roomCreatedForResponse(user)
+    let reportData = roomCreatedForResponseCreator(user)
     test("Функция возвращает объект с полем. В поле строка roomId имевшаяся у пользователя.",() => {
             expect(reportData.roomId).toBeDefined()
             expect(reportData.roomId).toBe(roomId)

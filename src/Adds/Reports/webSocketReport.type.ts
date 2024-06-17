@@ -32,3 +32,29 @@ export type gameStartedResponseFromServerDataType = {
 export type roomCreatedResponseFromServerDataType = {
     roomId: string
 }
+
+export type roomEnterResponseFromServerDataType = {
+    players: Omit<playersDataForResponseFromServerDataType, "hand"|"isLeader">[]
+    roomId: string,
+    gamePartyId: string,
+    newPlayer: Omit<playersDataForResponseFromServerDataType, "hand"|"isLeader">
+}
+
+export type playersMakeTurnDataTypeResonseFromServer = {
+    playerTurn: string
+}
+
+export type cardFromPoolToRowPlacedSuccessfully = {
+    playersId: string,
+    rows: rowsDataForResponseFromServerDataType[],
+    cardN: number
+}
+export type playersHandsType = {
+    [key: string] : handDataForResponsFromServerDataType[]
+}
+
+export type switchToCheckMessageFromServerPoolDataType = (handDataForResponsFromServerDataType&{playerId: string})[]
+
+export type playersIdFromServerDataType = {
+    playersId: string
+}

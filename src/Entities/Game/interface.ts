@@ -3,7 +3,7 @@ import { GameMods, GameStates, GameSteps } from "../../consts/rules"
 import { Icard } from "../Card/interface"
 import { IgameParty } from "../GameParty/interface"
 import { Iplayer } from "../Player/interface"
-import { IPool } from "../Pool/interface"
+import { IPool, poolCellType } from "../Pool/interface"
 import { IRow } from "../Row/interface"
 import { Istuff } from "../Stuff/interface"
 
@@ -42,14 +42,15 @@ export interface IGame {
     unblock(): void
     retake(): procedureReportType<IGame>
     needToRetake(): boolean
+    getPoolingCell(): poolCellType|procedureReportType<IGame>
 }
 
 export interface IStateForGame {
     prepare(): procedureReportType<IGame>
     getEndsResult(): resultEndGameType
-    getGameStep(): IStateForGame
     getName(): GameStates
     addToPool(card: Icard, player: Iplayer): procedureReportType<IPool>
     fromPoolToRow(): procedureReportType<IGame>
     fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame>
+    getPoolingCell(): poolCellType|procedureReportType<IGame>
 }

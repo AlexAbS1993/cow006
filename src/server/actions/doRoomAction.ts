@@ -14,6 +14,13 @@ export function createShortRoomId() {
 
 // Экшн, создающий комнату и делающий игрока, создавшего её, лидером, принимающим решение о старте матча
 export function doRoomAction(rooms: roomsType, user: IUser, games: gamesPartiesType): procedureReportType<null> {
+    if(user.getRoomId()){
+        return {
+            success: false, 
+            instance: null,
+            message: reportMessagesLibrary.server.userAlreadyInRoom
+        }
+    }
     let roomId = createShortRoomId()
     rooms[roomId] = []
     rooms[roomId].push(user)

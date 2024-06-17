@@ -12,6 +12,14 @@ export class Hand implements Ihand {
     countOfCards(): number {
         return this.hand.length
     }
+    getCard(nO: number): Icard | null {
+        return this.hand.reduce( (result: Icard | null, currentCard) => {
+            if (currentCard.getNominal() === nO){
+                result = currentCard as Icard
+            }
+            return result
+        }, null)
+    }
     addCard(card: Icard): procedureReportType<Ihand> {
         if (this.hand.length < this.limit){
             this.hand.push(card)

@@ -11,5 +11,15 @@ export const webSocketReportMessagesLibrary = {
     successRegistred: () => "Успешно зарегистрирован",
     gameStartedFailed: () => "Игру не удалось начать, вы не являетесь лидером",
     gameStartedSuccessfully: () => "Игра стартовала успешно",
-    roomCreated: (roomId: string) => `Комнтана ${roomId} успешна создана. Вы её лидер`
+    roomCreated: (roomId: string) => `Комната ${roomId} успешно создана. Вы её лидер`,
+    playerMakeTurn: (name: string) => `Игрок ${name} сделал свой выбор`,
+    afterTurnSwitchToChek: (name: string) => `После выбора игрока ${name} начинается стадия проверки. Ожидание подтверждения`,
+    inRoomAlready: () => `Вы уже находитесь в комнате`,
+    needToSelectRow: () => "Необходимо выбрать полосу для замены",
+    fromPoolToRowSuccess: () => "Карта успешно размещена, необходима следующая проверка",
+    successGettingHand: () => "Руки игрока успешно сформированы",
+    endGameNotify: () => "Игра завершена, затребуйте результирующие данные",
+    anotherStep: () => "Действие невозможно. Другая стадия игры",
+    cardDosntExist: () => "Карты нет в руке",
+    switchToProcess: () => "Карта успешно размещена. Переключение на игровой процесс"
 }

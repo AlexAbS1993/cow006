@@ -12,6 +12,10 @@ describe("A Hand is a players cards in a game. It must discard and get ones",() 
         playersHand.addCard(new Card(22, 2))
         expect(playersHand.countOfCards()).toBe(2)
     })
+    test("Hand can return card by number", () => {
+        expect(playersHand.getCard(1)).not.toBe(null)
+        expect(playersHand.getCard(100)).toBeNull()
+    })
     test("Hand can discard", () => {
         playersHand.discard(1)
         expect(playersHand.countOfCards()).toBe(1)

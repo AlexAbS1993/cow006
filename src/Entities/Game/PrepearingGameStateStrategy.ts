@@ -4,7 +4,7 @@ import { GameStates } from "../../consts/rules";
 import { Icard } from "../Card/interface";
 import { Hand } from "../Hand/model";
 import { Iplayer } from "../Player/interface";
-import { IPool } from "../Pool/interface";
+import { IPool, poolCellType } from "../Pool/interface";
 import { Row } from "../Row/model";
 import { ProcessGameStrategy } from "./ProcessGameStateStrategy";
 import { IGame, IStateForGame, resultEndGameType } from "./interface";
@@ -16,6 +16,13 @@ export class PrepearGameStateStrategy implements IStateForGame {
     constructor(game: Game, name: GameStates) {
         this.name = name
         this.game = game
+    }
+    getPoolingCell(): procedureReportType<IGame> | poolCellType {
+        return {
+            success: false,
+            message: reportMessagesLibrary.game.anotherStep,
+            instance: this.game
+        }
     }
     fromPoolToRowWithSelect(rowIndex: number): procedureReportType<IGame> {
         return {
@@ -49,9 +56,6 @@ export class PrepearGameStateStrategy implements IStateForGame {
     }
     getEndsResult(): resultEndGameType {
         return {}
-    }
-    getGameStep(): IStateForGame {
-        return this
     }
     getName(): GameStates {
         return this.name as GameStates

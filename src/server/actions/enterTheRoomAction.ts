@@ -9,9 +9,16 @@ import { Player } from "../../Entities/Player/model"
 import { IUser } from "../entities/user/interface"
 
 
-export function enterTheRoomAction(parsedData: enterTheRoomMessageType, ws: ws, rooms: roomsType, games: gamesPartiesType, user: IUser): procedureReportType<null> {
-    const desiredRoom = parsedData.data.roomToEnter
+export function enterTheRoomAction(roomToEnter: string, ws: ws, rooms: roomsType, games: gamesPartiesType, user: IUser): procedureReportType<null> {
+    const desiredRoom = roomToEnter
     if (rooms[desiredRoom]) {
+        if (rooms[desiredRoom].some(userInRoom => userInRoom.getId() === user.getId())){
+            return {
+                success: false,
+                instance: null,
+                message: reportMessagesLibrary.server.userAlreadyInRoom
+            }
+        }
         if (!games[desiredRoom].isGameStarted() && !games[desiredRoom].isPartyFull()) {
             rooms[desiredRoom].push(user)
             const playersInfo: playerInfoType = {
@@ -24,16 +31,6 @@ export function enterTheRoomAction(parsedData: enterTheRoomMessageType, ws: ws, 
             }
             let newPlayer = new Player(playersInfo, user.getId())
             games[desiredRoom].addPlayer(newPlayer)
-            for (let client of rooms[desiredRoom]) {
-                if (client.getWS() !== ws) {
-                    let report: webSocketProcedureReportType = {
-                        success: true,
-                        message: webSocketReportMessagesLibrary.userConnected(user.getName() as string),
-                        type: messageForSendFromServerEnum.userConnectToRoom
-                    }
-                    client.getWS()!.send(JSON.stringify(report))
-                }
-            }
             user.setRoom(desiredRoom)
             return {
                 success: true,
@@ -42,12 +39,6 @@ export function enterTheRoomAction(parsedData: enterTheRoomMessageType, ws: ws, 
             }
         }
         else {
-            let report: webSocketProcedureReportType = {
-                success: false,
-                message: webSocketReportMessagesLibrary.gameHasBeenStartedAlready(),
-                type: messageForSendFromServerEnum.gameHasBeenStartedAlready
-            }
-            ws.send(JSON.stringify(report))
             return {
                 success: false,
                 message: reportMessagesLibrary.server.gameIsAlreadyStarted,

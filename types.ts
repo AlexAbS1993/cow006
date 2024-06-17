@@ -8,13 +8,6 @@ export type clientsType = {
     [key: string]: ws
 }
 
-// export type userType = {
-//     id: string,
-//     name: string | null,
-//     currentClient: ws
-//     inGame: boolean
-// }
-
 export type roomsType = {
     [key: string]: IUser[]
 }
@@ -33,7 +26,7 @@ export type registrationUserType = {
 
 export enum messageForSendFromServerEnum {
     "userConnectToRoom" = "userConnectToRoom",
-    "gameHasBeenStartedAlready" = "gameHasBeenStartedAlready",
+    "canNotEnterTheRoom" = "canNotEnterTheRoom",
     "roomIsNotExists" = "roomIsNotExists",
     "userHasBeenLeave" = "userHasBeenLeave",
     "logInWrongDatas" = "logInWrongDatas",
@@ -41,7 +34,16 @@ export enum messageForSendFromServerEnum {
     "alreadyRegistred" = "alreadyRegistred",
     "successRegistred" = "successRegistred",
     "gameStarted" = "gameStarted",
-    "roomCreated" = "roomCreated"
+    "roomCreated" = "roomCreated",
+    "playerMakesTurn" = "playerMakesTurn",
+    "afterTurnSwitchToCheck" = "afterTurnSwitchToCheck",
+    "needToSelectRow" = "needToSelectRow",
+    "fromPoolToRowSucces" = "fromPoolToRowSucces",
+    "gettingHandSuccess"= "gettingHandSuccess",
+    "endGameReady" = "endGameReady",
+    "anotherStep" = "anotherStep",
+    "cardNotExist" = "cardNotExist",
+    "switchToProcess" = "switchToProcess"
 }
 
 export enum messageFromClientTypes {
@@ -51,7 +53,12 @@ export enum messageFromClientTypes {
     "setName" = "setName",
     "loginIn" = "loginIn",
     "registrate" = "registrate",
-    "startTheGame" = "startTheGame"
+    "startTheGame" = "startTheGame",
+    "playerMakesTurn" = "playerMakesTurn",
+    "checkCardFromPool" = "checkCardFromPool",
+    "checkCardFromPoolWithReplace" = "checkCardFromPoolWithReplace",
+    "needToTakeHands" = "needToTakeHands",
+    "getEndGameResults" = "getEndGameResult"
 }
 
 type tokenDataType = {
@@ -60,7 +67,8 @@ type tokenDataType = {
 
 
 export type expectedParsedDataType = (createRoomMessageType | enterTheRoomMessageType | exitRoomMessageType | setNameMessageType | loginInDataType |
-    registrateDataType | theGameStartType
+    registrateDataType | theGameStartType | playerMakesTurn | checkCardFromPoolType | checkCardFromPoolWithReplaceType | needToTakeHandsMessageDataType |
+    endGameMessageDataType
 ) & tokenDataType
 
 export type createRoomMessageType = {
@@ -103,6 +111,34 @@ export type theGameStartType = {
     data: {
         mode: GameMods
     }
+}
+
+export type playerMakesTurn  = {
+    type: messageFromClientTypes.playerMakesTurn,
+    data: {
+        player: string,
+        nOcard: number
+    }
+}
+
+export type checkCardFromPoolType = {
+    type: messageFromClientTypes.checkCardFromPool,
+    data: null
+}
+
+export type checkCardFromPoolWithReplaceType = {
+    type: messageFromClientTypes.checkCardFromPoolWithReplace,
+    data: {
+        rowIndex: number
+    }
+}
+
+export type needToTakeHandsMessageDataType = {
+    type: messageFromClientTypes.needToTakeHands
+}
+
+export type endGameMessageDataType = {
+    type: messageFromClientTypes.getEndGameResults
 }
 
 // Data-объекты в мессенджах от клиента по разным типам
