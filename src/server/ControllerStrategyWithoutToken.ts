@@ -1,4 +1,4 @@
-import { expectedParsedDataType, messageFromClientTypes, registrationUserType } from "../../types";
+import { expectedParsedDataType, messageFromClientTypes, registrationUserType, usersType } from "../../types";
 import { logInAction } from "./actions/logInAction";
 import { registrationAction } from "./actions/registrationAction";
 import { IWebSocketMessageController } from "./interface";
@@ -10,12 +10,14 @@ export class ControllerStrategyWithoutToken implements IWebSocketMessageControll
     private webSocket: ws
     private wsId: string
     private registrationUsers: registrationUserType
-    constructor(data: expectedParsedDataType, secretKey: string, webSocket: ws, wsId: string, registrationUsers: registrationUserType) {
+    private users: usersType
+    constructor(data: expectedParsedDataType, secretKey: string, webSocket: ws, wsId: string, registrationUsers: registrationUserType, users: usersType) {
         this.messageData = data
         this.secretKey = secretKey
         this.webSocket = webSocket
         this.wsId = wsId
         this.registrationUsers = registrationUsers
+        this.users = users
     }
     execute(): void {
         switch (this.messageData.type) {
@@ -24,7 +26,7 @@ export class ControllerStrategyWithoutToken implements IWebSocketMessageControll
                 break
             }
             case messageFromClientTypes.registrate: {
-                registrationAction(this.messageData, this.secretKey, this.registrationUsers, this.webSocket, this.wsId)
+                registrationAction(this.messageData, this.users, this.secretKey, this.registrationUsers, this.webSocket, this.wsId)
                 break
             }
             default: {

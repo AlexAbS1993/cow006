@@ -19,7 +19,7 @@ import { reportMessagesLibrary } from '../../Adds/Reports/reportMessages';
 
 describe("Сущность Game хранит в себе все данные о текущей партии. В неё будет включен список игроков \
 колода и игровые полосы, заполняемые по особым правилам", () => {
-    let mockId = uuid()
+    let mockId = process.env.NODE_ENV === "dev" ? "TEST" : uuid()
     let mockId2 = uuid()
     let classicMode = GameMods.classic
     let tactikMode = GameMods.tactic
@@ -40,6 +40,10 @@ describe("Сущность Game хранит в себе все данные о 
         mockParty.setLeaderLikeALeader(mockPlayer)
         classicGame = new Game(mockId, classicMode, mockParty)
         tacticGame = new Game(mockId2, tactikMode, mockParty)
+    })
+    test("У игры есть ID", () => {
+        let id = process.env.NODE_ENV === "dev" ? "TEST" : mockId
+        expect(classicGame.getGameId()).toBe(id)
     })
     test("Игра имеет статус готовности и неготовности", () => {
         expect(classicGame.isReady()).toBe(false)
@@ -232,7 +236,7 @@ describe("Сущность Game хранит в себе все данные о 
             expect(classicGame.getPlayers()[1].getPenaltySet().getPenaltyResult()).toBe(howBadPoints(88))
             let result2 = classicGame.fromPoolToRow()
             expect(result2.success).toBe(true)
-            expect(result2.message).toBe(reportMessagesLibrary.ok.okMessage)
+            expect(result2.message).toBe(reportMessagesLibrary.game.switchToProcess)
             expect(classicGame.getGameState()).toBe(GameStates.process)
             expect(classicGame.getRows()[0].countOfCards()).toBe(2)
         })

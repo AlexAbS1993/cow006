@@ -12,12 +12,13 @@ export function logInAction(parsedData: loginInDataType, secretKey: string, regi
         .update(`${login}_${password}`)
         .digest('hex');
     if (registrationUsers[hash]) {
-        let report: webSocketProcedureReportType<{ token: string }> = {
+        let report: webSocketProcedureReportType<{ token: string, login: string }> = {
             success: true,
             message: webSocketReportMessagesLibrary.successLogIn(),
             type: messageForSendFromServerEnum.successLogIn,
             data: {
-                token: hash
+                token: hash,
+                login
             }
         }
         webSocket.send(JSON.stringify(report))

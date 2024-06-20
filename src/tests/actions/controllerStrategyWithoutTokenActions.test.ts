@@ -1,4 +1,4 @@
-import { loginInDataType, messageFromClientTypes, registrateDataType, registrationUserType } from "../../../types"
+import { loginInDataType, messageFromClientTypes, registrateDataType, registrationUserType, usersType } from "../../../types"
 import { v4 as uuid } from 'uuid'
 import ws from 'ws'
 import { createHmac } from 'node:crypto';
@@ -12,6 +12,7 @@ describe("Testing action strategy without token in message", () => {
 
         }
     } as ws
+    let mockUsers: usersType = {}
     let mockRegUsers: registrationUserType = {}
     let mockData: registrateDataType = {
         type: messageFromClientTypes.registrate,
@@ -26,8 +27,9 @@ describe("Testing action strategy without token in message", () => {
         .update(`${login}_${password}`)
         .digest('hex');
     test("registration action registrate users in system", () => {
-        registrationAction(mockData, secreteKey, mockRegUsers, mockWS, mockId)
+        registrationAction(mockData, mockUsers, secreteKey, mockRegUsers, mockWS, mockId)
         expect(mockRegUsers[hash].id).toBe(mockId)
+        expect(mockUsers[mockRegUsers[hash].id].getId()).toBe(mockId)
     })
     test("logIn can get access users to system", () => {
         let logInMockData: loginInDataType = {

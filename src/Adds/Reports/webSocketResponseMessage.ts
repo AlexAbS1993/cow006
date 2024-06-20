@@ -2,6 +2,7 @@ export const webSocketReportMessagesLibrary = {
     userConnected: (user: string) => {
         return `${user} присоединился к комнате`
     },
+    registrationValidationError: () => "Невалидные данные для регистрации",
     gameHasBeenStartedAlready: () => "Игра уже началась",
     roomIsNotExists: () => "Такой комнаты не существует",
     userHasBeenLeaved: (user: string) => `${user} покинул комнату`,

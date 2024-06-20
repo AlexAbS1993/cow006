@@ -179,6 +179,7 @@ export class ControllerStrategyInGame implements IWebSocketMessageController{
                 this.room.forEach(user => {
                     user.getWS()!.send(JSON.stringify(report))
                 })
+                break
             }
             case messageFromClientTypes.needToTakeHands: {
                 let players = this.currentGame.getPlayers()

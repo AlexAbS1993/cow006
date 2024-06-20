@@ -7,8 +7,8 @@
     "test": "cross-env NODE_ENV=dev jest",
     "build": "tsc",
     "start": "node ./build/index.js",
-    "watchTSC": "tsc --watch",
-    "watchNodemon": "nodemon ./build/index.js"
+    "watchTSC": "cross-env NODE_ENV=dev tsc --watch",
+    "watchNodemon": "cross-env NODE_ENV=dev nodemon ./build/index.js"
   },
   "keywords": [
     "cow006",

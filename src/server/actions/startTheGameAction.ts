@@ -25,7 +25,7 @@ export function startTheGameAction(parsedData: theGameStartType, gameParty: Igam
     }
     else { 
         gameParty.setGameStarted()
-        let gameId = uuid()
+        let gameId = process.env.NODE_ENV === "dev" ? "TEST" : uuid()
         games[gameId] = new Game(gameId, parsedData.data.mode, gameParty)
         games[gameId].prepare()
         for (let player of gameParty.getPlayers()){

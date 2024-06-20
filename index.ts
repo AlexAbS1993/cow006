@@ -14,9 +14,12 @@ import { exitRoomAction } from "./src/server/actions/exitRoomAction"
 import { IUser } from "./src/server/entities/user/interface"
 import { webSocketProcedureReportType } from "./src/Adds/Reports/webSocketReport.type"
 import { webSocketReportMessagesLibrary } from "./src/Adds/Reports/webSocketResponseMessage"
+import http from 'http'
 
 const app = express()
-const webSocketServer = new ws.WebSocketServer({ port: 5000 })
+app.use(cors())
+const server = http.createServer(app);
+const webSocketServer = new ws.WebSocketServer({ server })
 const clients: clientsType = {}
 const rooms: roomsType = {}
 const users: usersType = {}
@@ -34,6 +37,7 @@ webSocketServer.on('connection', (webSocket) => {
     console.log(`${idWS} - новое подключение`)
     // Id присваивается, если пользователь авторизован. Пока пользователь не авторизован, он определяется по idWS
     let id: string = ""
+    webSocket.send(JSON.stringify({type: 'greetings', data: `hello ${idWS}`}))
     webSocket.on('message', async (data) => {
         let parsedData: expectedParsedDataType
         try{
@@ -46,9 +50,34 @@ webSocketServer.on('connection', (webSocket) => {
         }
         // При отправке сообщения необходимо крепить токен
         const token = parsedData.token
+        if(parsedData.type === messageFromClientTypes.iAmInAlready){
+            if (registrationUsers[token]){
+                let user = users[registrationUsers[token].id]
+                let data = {
+                    login: user.getName(),
+                    id: user.getId()
+                }
+                let report = {
+                    type: messageForSendFromServerEnum.iAmInAlready,
+                    success: true,
+                    data,
+                    message: "already there"
+                }
+                webSocket.send(JSON.stringify(report))
+            }
+            else {
+                let report = {
+                    type: messageForSendFromServerEnum.iAmInAlready,
+                    success: false,
+                    message: "no token"
+                }
+                webSocket.send(JSON.stringify(report))
+            }
+            return
+        }
         const messageController = new WebSocketMessageController()
         if (!token) {
-            messageController.defineStrategy(new ControllerStrategyWithoutToken(parsedData, secretkey, webSocket, idWS, registrationUsers))
+            messageController.defineStrategy(new ControllerStrategyWithoutToken(parsedData, secretkey, webSocket, idWS, registrationUsers, users))
             messageController.execute()
             return
         }
@@ -62,9 +91,9 @@ webSocketServer.on('connection', (webSocket) => {
         // Если токен рабочий, то пользователь получает свой id
         id = registrationUsers[token].id
         // Если пользователя еще нет среди игроков, то создается его пустой профиль
-        if (!users[id]) {
-            users[id] = new User(id, id)
-        }
+        // if (!users[id]) {
+        //     users[id] = new User(id, id)
+        // }
         users[id].setWSId(idWS)
         users[id].setCurrentWebSocket(webSocket)
         // Возможно стоит передавать просто user, а не всех юзеров
@@ -154,6 +183,6 @@ app.get('/games/:id', (req, res) => {
 })
 
 
-app.listen(3000, () => {
+server.listen(3000, () => {
     console.log('3000 PORT is been listening')
 })

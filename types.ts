@@ -25,6 +25,7 @@ export type registrationUserType = {
 }
 
 export enum messageForSendFromServerEnum {
+    "validationRegistrationError" = "validationRegistrationError",
     "userConnectToRoom" = "userConnectToRoom",
     "canNotEnterTheRoom" = "canNotEnterTheRoom",
     "roomIsNotExists" = "roomIsNotExists",
@@ -43,7 +44,8 @@ export enum messageForSendFromServerEnum {
     "endGameReady" = "endGameReady",
     "anotherStep" = "anotherStep",
     "cardNotExist" = "cardNotExist",
-    "switchToProcess" = "switchToProcess"
+    "switchToProcess" = "switchToProcess",
+     "iAmInAlready" =  "iAmInAlready"
 }
 
 export enum messageFromClientTypes {
@@ -58,7 +60,8 @@ export enum messageFromClientTypes {
     "checkCardFromPool" = "checkCardFromPool",
     "checkCardFromPoolWithReplace" = "checkCardFromPoolWithReplace",
     "needToTakeHands" = "needToTakeHands",
-    "getEndGameResults" = "getEndGameResult"
+    "getEndGameResults" = "getEndGameResult",
+    "iAmInAlready" =  "iAmInAlready"
 }
 
 type tokenDataType = {
@@ -68,8 +71,13 @@ type tokenDataType = {
 
 export type expectedParsedDataType = (createRoomMessageType | enterTheRoomMessageType | exitRoomMessageType | setNameMessageType | loginInDataType |
     registrateDataType | theGameStartType | playerMakesTurn | checkCardFromPoolType | checkCardFromPoolWithReplaceType | needToTakeHandsMessageDataType |
-    endGameMessageDataType
+    endGameMessageDataType | iAmInAlreadyType
 ) & tokenDataType
+
+export type iAmInAlreadyType = {
+    type: messageFromClientTypes.iAmInAlready,
+    data: null
+}
 
 export type createRoomMessageType = {
     type: messageFromClientTypes.doRoomCreate
