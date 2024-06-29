@@ -12,7 +12,7 @@ import { ControllerStrategyInGame } from "./src/server/ControllerStrategyInGame"
 import { Iplayer } from "./src/Entities/Player/interface"
 import { exitRoomAction } from "./src/server/actions/exitRoomAction"
 import { IUser } from "./src/server/entities/user/interface"
-import { webSocketProcedureReportType } from "./src/Adds/Reports/webSocketReport.type"
+import { playersDataForResponseFromServerDataType, webSocketProcedureReportType } from "./src/Adds/Reports/webSocketReport.type"
 import { webSocketReportMessagesLibrary } from "./src/Adds/Reports/webSocketResponseMessage"
 import http from 'http'
 
@@ -55,7 +55,8 @@ webSocketServer.on('connection', (webSocket) => {
                 let user = users[registrationUsers[token].id]
                 let data = {
                     login: user.getName(),
-                    id: user.getId()
+                    id: user.getId(),
+                    name: user.getName()
                 }
                 let report = {
                     type: messageForSendFromServerEnum.iAmInAlready,
@@ -128,13 +129,20 @@ webSocketServer.on('connection', (webSocket) => {
                         }
                     }
                     exitRoomAction(parsedData, rooms, webSocket, currentUser, gamesParties)
-                    let report: webSocketProcedureReportType = {
+                    let report: webSocketProcedureReportType<Pick<playersDataForResponseFromServerDataType, "name"|"id">&{leaderId: string}> = {
                         success: true,
                         message: webSocketReportMessagesLibrary.userHasBeenLeaved(currentUser.getName() as string),
-                        type: messageForSendFromServerEnum.userHasBeenLeave
+                        type: messageForSendFromServerEnum.userHasBeenLeave,
+                        data: {
+                            name: currentUser.getName(),
+                            id: currentUser.getId(),
+                            leaderId: gamesParties[parsedData.data.roomFrom].getLeader()?.getId() as string
+                        }
                     }
-                    for (let client of rooms[parsedData.data.roomFrom]) {
-                        client.getWS()!.send(JSON.stringify(report))
+                    if (rooms[parsedData.data.roomFrom]){
+                        for (let client of rooms[parsedData.data.roomFrom]) {
+                            client.getWS()!.send(JSON.stringify(report))
+                        }
                     }
                 }
             }
@@ -156,6 +164,10 @@ app.get('/users', (req, res) => {
         }
     }
     res.send(mappedUsers)
+})
+
+app.get('/rooms', (req, res) => {
+    res.send(rooms)
 })
 
 app.get("/games/:id/hand/:name", (req, res) => {

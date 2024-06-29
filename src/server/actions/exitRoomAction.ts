@@ -31,6 +31,15 @@ export function exitRoomAction(parsedData: exitRoomMessageType, rooms: roomsType
         user.setInGame(false)
         user.setRoom(null)
         gamesParty[desiredRoom].deletePlayer(user.getId() as string)
+           // Если комнату покидает последний игрок, то комната закрывается
+           if (rooms[desiredRoom].length === 0){
+            delete rooms[desiredRoom]
+            return {
+                success: true,
+                message: reportMessagesLibrary.ok.okMessage,
+                instance: null
+            }
+        }
     }
     return {
         success: true,

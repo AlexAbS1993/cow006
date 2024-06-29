@@ -6,7 +6,7 @@ import { webSocketReportMessagesLibrary } from '../../Adds/Reports/webSocketResp
 import { User } from '../entities/user/model';
 
 export function registrationAction(parsedData: registrateDataType, users: usersType, secretKey: string, registrationUsers: registrationUserType, webSocket: ws, wsId: string) {
-    const { login, password } = parsedData.data
+    let { login, password } = parsedData.data
     if (login.length < 1 || password.length < 3){
             let report: webSocketProcedureReportType = {
             success: false,

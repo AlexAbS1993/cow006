@@ -6,7 +6,7 @@ import { enterTheRoomAction } from "./actions/enterTheRoomAction";
 import { exitRoomAction } from "./actions/exitRoomAction";
 import { startTheGameAction } from "./actions/startTheGameAction";
 import { Iplayer } from "../Entities/Player/interface";
-import { gameStartedResponseFromServerDataType, roomCreatedResponseFromServerDataType, roomEnterResponseFromServerDataType, webSocketProcedureReportType } from "../Adds/Reports/webSocketReport.type";
+import { gameStartedResponseFromServerDataType, playersDataForResponseFromServerDataType, roomCreatedResponseFromServerDataType, roomEnterResponseFromServerDataType, webSocketProcedureReportType } from "../Adds/Reports/webSocketReport.type";
 import { webSocketReportMessagesLibrary } from "../Adds/Reports/webSocketResponseMessage";
 import { gameStartedInfoForResponseCreator } from "../Adds/Reports/webSocketResponseDataCreators/gameStartedInfoForResponseCreator";
 import { roomCreatedForResponseCreator } from "../Adds/Reports/webSocketResponseDataCreators/roomCreatedForResponse";
@@ -55,7 +55,7 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
                 let enterTheRoomResult = enterTheRoomAction(this.parsedData.data.roomToEnter, this.webSocket, this.rooms, this.games, this.users[this.id])
                 if (enterTheRoomResult.success){
                     let roomId = this.currentUser.getRoomId() as string
-                    let reportData = roomEnterResponseDataCreator(roomId, this.rooms[roomId])
+                    let reportData = roomEnterResponseDataCreator(roomId, this.rooms[roomId], this.games[roomId])
                     let report: webSocketProcedureReportType<roomEnterResponseFromServerDataType> = {
                         success: true,
                         message: webSocketReportMessagesLibrary.userConnected(this.currentUser.getName()),
@@ -97,16 +97,31 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
                 break
             }
             case messageFromClientTypes.exitTheRoom: {
+                // Необходимо обратить внимание на валидацию входных данных
+                if (!this.parsedData.data.roomFrom){
+                    let report = {
+                        success: false
+                    }
+                    return
+                }
                 let resultOfExit = exitRoomAction(this.parsedData, this.rooms, this.webSocket, this.users[this.id], this.games)
                 if (resultOfExit.success){
-                    let report: webSocketProcedureReportType = {
+                    let report: webSocketProcedureReportType<Pick<playersDataForResponseFromServerDataType, "name"|"id">&{leaderId: string}> = {
                         success: true,
                         message: webSocketReportMessagesLibrary.userHasBeenLeaved(this.currentUser.getName() as string),
-                        type: messageForSendFromServerEnum.userHasBeenLeave
+                        type: messageForSendFromServerEnum.userHasBeenLeave,
+                        data: {
+                            name: this.currentUser.getName(),
+                            id: this.currentUser.getId(),
+                            leaderId: this.games[this.parsedData.data.roomFrom].getLeader()?.getId() as string
+                        }
                     }
                     this.webSocket.send(JSON.stringify(report))
-                    for (let client of this.rooms[this.parsedData.data.roomFrom]) {
-                        client.getWS()!.send(JSON.stringify(report))
+                    // Если хоть кто-то остался в комнате и комната еще существует, то отправить сообщение всем о выходе игрока
+                    if (this.rooms[this.parsedData.data.roomFrom]){
+                        for (let client of this.rooms[this.parsedData.data.roomFrom]) {
+                            client.getWS()!.send(JSON.stringify(report))
+                        }
                     }
                 }
                 break

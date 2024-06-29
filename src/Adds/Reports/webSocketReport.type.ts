@@ -37,7 +37,8 @@ export type roomEnterResponseFromServerDataType = {
     players: Omit<playersDataForResponseFromServerDataType, "hand"|"isLeader">[]
     roomId: string,
     gamePartyId: string,
-    newPlayer: Omit<playersDataForResponseFromServerDataType, "hand"|"isLeader">
+    newPlayer: Omit<playersDataForResponseFromServerDataType, "hand"|"isLeader">,
+    leader: string
 }
 
 export type playersMakeTurnDataTypeResonseFromServer = {
