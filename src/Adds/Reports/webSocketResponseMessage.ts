@@ -22,5 +22,6 @@ export const webSocketReportMessagesLibrary = {
     endGameNotify: () => "Игра завершена, затребуйте результирующие данные",
     anotherStep: () => "Действие невозможно. Другая стадия игры",
     cardDosntExist: () => "Карты нет в руке",
-    switchToProcess: () => "Карта успешно размещена. Переключение на игровой процесс"
+    switchToProcess: () => "Карта успешно размещена. Переключение на игровой процесс",
+    playerLeavesFromGame: (id: string) => `Игрок с id ${id} вышел из игры. Игра закончена`
 }

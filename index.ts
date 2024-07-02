@@ -134,6 +134,28 @@ webSocketServer.on('connection', (webSocket) => {
         for (let user in users){
             let currentUser:IUser = users[user]
             if(currentUser.getWSId() === idWS){
+                if (currentUser.getGameId()){
+                    let dataForSend = {
+                        userId: currentUser.getId(),
+                    }
+                    let report: webSocketProcedureReportType<typeof dataForSend>={
+                        data: dataForSend,
+                        type: messageForSendFromServerEnum.GameEndsPlayerLeaves,
+                        message: webSocketReportMessagesLibrary.playerLeavesFromGame(dataForSend.userId),
+                        success: true
+                    }
+                    if (rooms[currentUser.getRoomId() as string]){
+                        for (let client of rooms[currentUser.getRoomId() as string]) {
+                            client.getWS()!.send(JSON.stringify(report))
+                        }
+                    }
+                    delete gamesParties[currentUser.getRoomId() as string]
+                    delete rooms[currentUser.getRoomId() as string]
+                    delete games[currentUser.getGameId() as string]
+                    currentUser.setInGame(false)
+                    currentUser.setRoom(null) 
+                    currentUser.setGameId(null)
+                }
                 if(currentUser.getRoomId()){
                     let parsedData: exitRoomMessageType = {
                         type: messageFromClientTypes.exitTheRoom,

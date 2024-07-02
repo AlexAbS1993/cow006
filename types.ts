@@ -45,7 +45,8 @@ export enum messageForSendFromServerEnum {
     "anotherStep" = "anotherStep",
     "cardNotExist" = "cardNotExist",
     "switchToProcess" = "switchToProcess",
-     "iAmInAlready" =  "iAmInAlready"
+     "iAmInAlready" =  "iAmInAlready",
+     "GameEndsPlayerLeaves" =  "GameEndsPlayerLeaves" 
 }
 
 export enum messageFromClientTypes {
