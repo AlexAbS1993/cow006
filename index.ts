@@ -53,10 +53,23 @@ webSocketServer.on('connection', (webSocket) => {
         if(parsedData.type === messageFromClientTypes.iAmInAlready){
             if (registrationUsers[token]){
                 let user = users[registrationUsers[token].id]
+                let inRoomId = user.getRoomId()
+                let roomInformation = null
+                if (inRoomId){
+                    let roomId = user.getRoomId() as string
+                    roomInformation = rooms[roomId].map(user => {
+                        return {
+                            id: user.getId(),
+                            name: user.getName()
+                        }
+                    })
+                }
                 let data = {
                     login: user.getName(),
                     id: user.getId(),
-                    name: user.getName()
+                    name: user.getName(),
+                    inRoomId,
+                    roomInformation
                 }
                 let report = {
                     type: messageForSendFromServerEnum.iAmInAlready,
