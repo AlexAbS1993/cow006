@@ -49,6 +49,15 @@ export class ControllerStrategyToken implements IWebSocketMessageController {
                     }
                     this.webSocket.send(JSON.stringify(report))
                 }
+                else {
+                    if (doRoomResult.message === reportMessagesLibrary.server.userAlreadyInRoom){
+                        let report: webSocketProcedureReportType = {
+                            success: false,
+                            message: webSocketReportMessagesLibrary.inRoomAlready(),
+                            type: messageForSendFromServerEnum.roomCreated,
+                        }
+                    }
+                }
                 break
             }
             case messageFromClientTypes.enterTheRoom: {

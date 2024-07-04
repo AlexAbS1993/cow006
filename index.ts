@@ -7,7 +7,6 @@ import { WebSocketMessageController } from "./src/server/ControllerStrategy"
 import { ControllerStrategyWithoutToken } from "./src/server/ControllerStrategyWithoutToken"
 import { ControllerWrongTokenStrategy } from "./src/server/ControllerWrongTokenStrategy"
 import { ControllerStrategyToken } from "./src/server/ControllerStrategyToken"
-import { User } from "./src/server/entities/user/model"
 import { ControllerStrategyInGame } from "./src/server/ControllerStrategyInGame"
 import { Iplayer } from "./src/Entities/Player/interface"
 import { exitRoomAction } from "./src/server/actions/exitRoomAction"
@@ -136,22 +135,27 @@ webSocketServer.on('connection', (webSocket) => {
             if(currentUser.getWSId() === idWS){
                 if (currentUser.getGameId()){
                     let dataForSend = {
-                        userId: currentUser.getId(),
+                        userName: currentUser.getName(),
                     }
                     let report: webSocketProcedureReportType<typeof dataForSend>={
                         data: dataForSend,
                         type: messageForSendFromServerEnum.GameEndsPlayerLeaves,
-                        message: webSocketReportMessagesLibrary.playerLeavesFromGame(dataForSend.userId),
+                        message: webSocketReportMessagesLibrary.playerLeavesFromGame(dataForSend.userName),
                         success: true
                     }
+                    let roomId = currentUser.getRoomId()
+                    let gameId = currentUser.getGameId()
                     if (rooms[currentUser.getRoomId() as string]){
                         for (let client of rooms[currentUser.getRoomId() as string]) {
                             client.getWS()!.send(JSON.stringify(report))
+                            client.setInGame(false)
+                            client.setRoom(null) 
+                            client.setGameId(null)
                         }
                     }
-                    delete gamesParties[currentUser.getRoomId() as string]
-                    delete rooms[currentUser.getRoomId() as string]
-                    delete games[currentUser.getGameId() as string]
+                    delete gamesParties[roomId as string]
+                    delete rooms[roomId as string]
+                    delete games[gameId as string]
                     currentUser.setInGame(false)
                     currentUser.setRoom(null) 
                     currentUser.setGameId(null)
