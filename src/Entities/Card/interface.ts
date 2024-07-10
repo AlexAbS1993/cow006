@@ -1,4 +1,13 @@
 export interface Icard {
-    getNominal(): number
-    getBadPoints(): number
+    getNominal(): number;
+
+    /* Возвращает номинал карты
+    * являющийся игровым номером
+    * учитывается в подсчёте штрафных очков
+    */
+    getBadPoints(): number;
+    
+    /* Возвращает количество
+    * штрафных очков
+    */
 }

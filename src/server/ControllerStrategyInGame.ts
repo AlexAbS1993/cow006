@@ -208,8 +208,13 @@ export class ControllerStrategyInGame implements IWebSocketMessageController{
                 break
             }
             case messageFromClientTypes.getEndGameResults: {
+                let report =  {
+                    success: true,
+                    data: this.currentGame.getEndsResult(),
+                    type: messageForSendFromServerEnum.endGameReady
+                }
                 this.room.forEach(user => {
-                    user.getWS()!.send(JSON.stringify(this.currentGame.getEndsResult()))
+                    user.getWS()!.send(JSON.stringify(report))
                 })
                 break
             }
