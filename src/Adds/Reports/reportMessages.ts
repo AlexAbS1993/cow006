@@ -9,8 +9,9 @@ type reportMessagesOkType = typeof reportMessagesLibrary.ok[keyof typeof reportM
 type reportMessageGamePartyType = typeof reportMessagesLibrary.GameParty[keyof typeof reportMessagesLibrary.GameParty]
 type reportMessageServerType = typeof reportMessagesLibrary.server[keyof typeof reportMessagesLibrary.server]
 type reportMessageGameType = typeof reportMessagesLibrary.game[keyof typeof reportMessagesLibrary.game]
+type reportMessageDBType = typeof reportMessagesLibrary.db[keyof typeof reportMessagesLibrary.db]
 
-type reportMessagesListType = reportMessagesHandType | reportMessagesOkType | reportMessageGamePartyType | reportMessageServerType | reportMessageGameType
+type reportMessagesListType = reportMessagesHandType | reportMessagesOkType | reportMessageGamePartyType | reportMessageServerType | reportMessageGameType | reportMessageDBType
 export type reportMessagesLibraryType = reportMessagesListType
 
 export const reportMessagesLibrary = {
@@ -43,5 +44,8 @@ export const reportMessagesLibrary = {
         switchToEnd: "Переключен на режим конца игры" as const,
         needToSelect: "Необходимо выбрать ряд" as const,
         playerMakesTurn: "Игрок сделал ход" as const
+    } as const,
+    db: {
+        notFound: "Искомые данные не найдены в базе данных" as const
     } as const
 }
