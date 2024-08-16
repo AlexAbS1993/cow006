@@ -8,5 +8,8 @@ export type DataBaseReportType<datatype = null> = {
 }
 
 export enum DBreportTypeEnum {
-    "Not Found" = "Not Found"
+    "Not Found" = "Not Found",
+    "Created" = "Created",
+    "NotCreated" = "NotCreated",
+    "Get" = "Get"
 }

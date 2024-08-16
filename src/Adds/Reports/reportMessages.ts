@@ -46,6 +46,7 @@ export const reportMessagesLibrary = {
         playerMakesTurn: "Игрок сделал ход" as const
     } as const,
     db: {
-        notFound: "Искомые данные не найдены в базе данных" as const
+        notFound: "Искомые данные не найдены в базе данных" as const,
+        notCreated: "Не удалось создать запись в базе данных"  as const
     } as const
 }
