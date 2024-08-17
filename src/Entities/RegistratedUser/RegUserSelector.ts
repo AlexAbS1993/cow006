@@ -42,11 +42,12 @@ export class RegUserSelector implements IRegUserSelector {
                 type: DBreportTypeEnum.Created
             }
         } 
-        catch(e){
+        catch(e: any){
             return {
                 success: false,
                 message: reportMessagesLibrary.db.notCreated,
-                type: DBreportTypeEnum.NotCreated
+                type: DBreportTypeEnum.NotCreated,
+                dbErrorMessage: e.message
             }
         }
     }
