@@ -1,4 +1,5 @@
 import { DataBaseReportType } from "../../Adds/Reports/dbReport.type";
+import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { IDBModel } from "../../Database/interface";
 
 export type gameStatistic = {
@@ -24,7 +25,7 @@ export interface IRegUser {
     getHash():string,
     getId(): string,
     getStatistic(): gameStatistic
-    updateStatistic(data: gameStatistic): void
+    updateStatistic(data: gameStatistic): procedureReportType<IRegUser>
     getAuth():AuthRegUserType
 }
 

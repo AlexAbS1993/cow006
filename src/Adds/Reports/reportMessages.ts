@@ -10,8 +10,12 @@ type reportMessageGamePartyType = typeof reportMessagesLibrary.GameParty[keyof t
 type reportMessageServerType = typeof reportMessagesLibrary.server[keyof typeof reportMessagesLibrary.server]
 type reportMessageGameType = typeof reportMessagesLibrary.game[keyof typeof reportMessagesLibrary.game]
 type reportMessageDBType = typeof reportMessagesLibrary.db[keyof typeof reportMessagesLibrary.db]
+type reportMessageUserRegType =  typeof reportMessagesLibrary.userReg[keyof typeof reportMessagesLibrary.userReg]
 
-type reportMessagesListType = reportMessagesHandType | reportMessagesOkType | reportMessageGamePartyType | reportMessageServerType | reportMessageGameType | reportMessageDBType
+type reportMessagesListType = reportMessagesHandType | 
+reportMessagesOkType | reportMessageGamePartyType | 
+reportMessageServerType | reportMessageGameType | 
+reportMessageDBType | reportMessageUserRegType
 export type reportMessagesLibraryType = reportMessagesListType
 
 export const reportMessagesLibrary = {
@@ -48,5 +52,9 @@ export const reportMessagesLibrary = {
     db: {
         notFound: "Искомые данные не найдены в базе данных" as const,
         notCreated: "Не удалось создать запись в базе данных"  as const
+    } as const,
+    userReg: {
+        wrongStatisticData: "Неверные данные статистики" as const,
+        wrongTypes: "Неверные типы статистики" as const
     } as const
 }
