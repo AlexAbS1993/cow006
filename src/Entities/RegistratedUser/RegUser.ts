@@ -1,6 +1,7 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
 import { ValidatorReportEnum, ValidatorReportType } from "../../Adds/Reports/validatorReport.type";
+import { validatorResponseMessage } from "../../Adds/Reports/validatorResportMessage";
 import { AuthRegUserType, gameStatistic, IRegUser, RegUserType } from "./interface";
 
 export class RegUser implements IRegUser{
@@ -54,10 +55,10 @@ export class RegUser implements IRegUser{
     private statisticFieldValidate(data: gameStatistic): ValidatorReportType{
         let requiredFields: (keyof typeof this.statistic)[] = Object.keys(this.statistic) as (keyof typeof this.statistic)[]
         for (let field of requiredFields){
-            if (!data[field]){
+            if (data[field] === undefined){
                 return {
                     success: false,
-                    message: reportMessagesLibrary.userReg.wrongStatisticData,
+                    message: validatorResponseMessage.wrongDataSet,
                     type: ValidatorReportEnum.NoRequiredField
                 }
             }
@@ -73,7 +74,7 @@ export class RegUser implements IRegUser{
             if (typeof data[key as keyof gameStatistic]  !== 'number'){
                 return {
                     success: false, 
-                    message: reportMessagesLibrary.userReg.wrongTypes,
+                    message: validatorResponseMessage.wrongType,
                     type: ValidatorReportEnum.WrongType
                 }
             }
