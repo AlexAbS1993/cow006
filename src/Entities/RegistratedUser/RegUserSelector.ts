@@ -10,7 +10,7 @@ export class RegUserSelector implements IRegUserSelector {
     constructor(db: IDBModel<RegUserType>) {
         this.database = db
     }
-    async getRegUser(field: "hash", value: string): Promise<DataBaseReportType<IRegUser | null>> {
+    async getRegUser(value: string, field: keyof RegUserType = "hash"): Promise<DataBaseReportType<IRegUser | null>> {
         let user = await this.database.getByField(field, value)
         if (user === null) {
             return {

@@ -5,7 +5,7 @@ export enum modelsNameEnum {
     "RegUser" = "RegUser"
 }
 
-export class MongoDBnoSQL {
+class MongoDBnoSQL {
     mongoose: typeof mongoose
     schemas: {[key: string]: Model<any>}
     constructor(){
@@ -48,3 +48,5 @@ export class MongoDBnoSQL {
         return
     }
 }
+
+export default MongoDBnoSQL

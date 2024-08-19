@@ -31,6 +31,6 @@ export interface IRegUser {
 
 export interface IRegUserSelector {
     database: IDBModel<RegUserType>
-    getRegUser(field: 'hash', value: string):Promise<DataBaseReportType<IRegUser|null>>
+    getRegUser(value: string, field: keyof RegUserType):Promise<DataBaseReportType<IRegUser|null>>
     saveRegUser(user: IRegUser): Promise<DataBaseReportType>
 }
