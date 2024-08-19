@@ -55,6 +55,7 @@ export const reportMessagesLibrary = {
     } as const,
     userReg: {
         wrongStatisticData: "Неверные данные статистики" as const,
-        wrongTypes: "Неверные типы статистики" as const
+        wrongTypes: "Неверные типы статистики" as const,
+        wrongRegUserData: "Неверные данные для сохранения пользователя" as const
     } as const
 }

@@ -1,17 +1,18 @@
 import { DataBaseReportType, DBreportTypeEnum } from "../../Adds/Reports/dbReport.type";
 import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
+import { ValidatorReportEnum, ValidatorReportType } from "../../Adds/Reports/validatorReport.type";
 import { IDBModel } from "../../Database/interface";
-import {  IRegUser, IRegUserSelector, RegUserType } from "./interface";
+import { IRegUser, IRegUserSelector, RegUserType } from "./interface";
 import { RegUser } from "./RegUser";
 
 export class RegUserSelector implements IRegUserSelector {
     database: IDBModel<RegUserType>;
-    constructor(db:IDBModel<RegUserType>){
+    constructor(db: IDBModel<RegUserType>) {
         this.database = db
     }
     async getRegUser(field: "hash", value: string): Promise<DataBaseReportType<IRegUser | null>> {
         let user = await this.database.getByField(field, value)
-        if (user === null){
+        if (user === null) {
             return {
                 success: false,
                 message: reportMessagesLibrary.db.notFound,
@@ -20,7 +21,7 @@ export class RegUserSelector implements IRegUserSelector {
         }
         let regUser = new RegUser(user)
         return {
-            success: true, 
+            success: true,
             message: 'ok',
             type: DBreportTypeEnum.Get,
             data: regUser
@@ -34,15 +35,24 @@ export class RegUserSelector implements IRegUserSelector {
             hash: user.getHash(),
             statistic: user.getStatistic()
         }
-        try{
+        let dtoValidator = this.regUserSaveDTOValidator(regUserDTO)
+        if (!dtoValidator.success) {
+            return {
+                success: dtoValidator.success,
+                message: dtoValidator.message,
+                type: DBreportTypeEnum.NotCreated,
+                dbErrorMessage: dtoValidator.type
+            }
+        }
+        try {
             await this.database.save(regUserDTO)
             return {
-                success: true, 
+                success: true,
                 message: 'ok',
                 type: DBreportTypeEnum.Created
             }
-        } 
-        catch(e: any){
+        }
+        catch (e: any) {
             return {
                 success: false,
                 message: reportMessagesLibrary.db.notCreated,
@@ -51,5 +61,22 @@ export class RegUserSelector implements IRegUserSelector {
             }
         }
     }
-    
+
+    private regUserSaveDTOValidator(DTO: RegUserType): ValidatorReportType {
+        let requiredFields: (keyof RegUserType)[] = ['login', 'password', 'id', 'hash', 'statistic']
+        for (let value of requiredFields) {
+            if (!DTO[value]) {
+                return {
+                    success: false,
+                    message: reportMessagesLibrary.userReg.wrongRegUserData,
+                    type: ValidatorReportEnum.NoRequiredField
+                }
+            }
+        }
+        return {
+            success: true,
+            message: reportMessagesLibrary.ok.okMessage,
+            type: ValidatorReportEnum.ok
+        }
+    }
 }

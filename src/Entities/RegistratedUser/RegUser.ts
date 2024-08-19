@@ -1,5 +1,6 @@
 import { procedureReportType } from "../../Adds/Reports/procedureReport.type";
 import { reportMessagesLibrary } from "../../Adds/Reports/reportMessages";
+import { ValidatorReportEnum, ValidatorReportType } from "../../Adds/Reports/validatorReport.type";
 import { AuthRegUserType, gameStatistic, IRegUser, RegUserType } from "./interface";
 
 export class RegUser implements IRegUser{
@@ -29,11 +30,19 @@ export class RegUser implements IRegUser{
     updateStatistic(data: gameStatistic): procedureReportType<this> {
         let validationFieldResult =this.statisticFieldValidate(data) 
         if (!validationFieldResult.success){
-            return validationFieldResult
+            return {
+                instance: this,
+                success: false, 
+                message: reportMessagesLibrary.userReg.wrongStatisticData
+            }
         }
         let validationTypeResult = this.statisticTypeValidate(data)
         if (!validationTypeResult.success){
-            return validationTypeResult
+            return {
+                instance: this,
+                success: false, 
+                message: reportMessagesLibrary.userReg.wrongTypes
+            }
         }
         this.statistic = data
         return {
@@ -42,37 +51,37 @@ export class RegUser implements IRegUser{
             instance: this
         }
     }
-    private statisticFieldValidate(data: gameStatistic): procedureReportType<this>{
+    private statisticFieldValidate(data: gameStatistic): ValidatorReportType{
         let requiredFields: (keyof typeof this.statistic)[] = Object.keys(this.statistic) as (keyof typeof this.statistic)[]
         for (let field of requiredFields){
             if (!data[field]){
                 return {
                     success: false,
                     message: reportMessagesLibrary.userReg.wrongStatisticData,
-                    instance: this
+                    type: ValidatorReportEnum.NoRequiredField
                 }
             }
         }
         return {
             success: true,
             message: reportMessagesLibrary.ok.okMessage,
-            instance: this
+            type: ValidatorReportEnum.ok
         }
     }
-    private statisticTypeValidate(data: gameStatistic): procedureReportType<this>{
+    private statisticTypeValidate(data: gameStatistic): ValidatorReportType{
         for (let key in data){
             if (typeof data[key as keyof gameStatistic]  !== 'number'){
                 return {
                     success: false, 
                     message: reportMessagesLibrary.userReg.wrongTypes,
-                    instance: this
+                    type: ValidatorReportEnum.WrongType
                 }
             }
         }
         return {
             success: true,
             message: reportMessagesLibrary.ok.okMessage,
-            instance: this
+            type: ValidatorReportEnum.ok
         }
     }
     private login: string;
