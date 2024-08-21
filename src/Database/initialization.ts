@@ -15,6 +15,7 @@ class MongoDBnoSQL {
     async connect(path: string){
         try{
             await this.mongoose.connect(path)
+            return true
         }
         catch(e: any){
             throw new Error(e.message)
@@ -38,14 +39,30 @@ class MongoDBnoSQL {
                 type: String, required: true
             },
             statistic: {
-                wins: Number,
-                looses: Number,
-                matches: Number
+                type: {
+                    wins: Number,
+                    looses: Number,
+                    matches: Number
+                },
+                default: {
+                    wins: 0,
+                    looses: 0,
+                    matches: 0
+                }
             }
         })
-        let regUserModel = this.mongoose.model(modelsNameEnum.RegUser, regUserSchema)
-        this.schemas[modelsNameEnum.RegUser] = regUserModel
+        if (!this.mongoose.models[modelsNameEnum.RegUser]){
+            let regUserModel = this.mongoose.model(modelsNameEnum.RegUser, regUserSchema)
+            this.schemas[modelsNameEnum.RegUser] = regUserModel
+        }
+        else {
+            this.schemas[modelsNameEnum.RegUser] = this.mongoose.models[modelsNameEnum.RegUser]
+        }        
         return
+    }
+    async disconnect(){
+        await this.mongoose.disconnect()
+        return true
     }
 }
 
