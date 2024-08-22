@@ -61,7 +61,10 @@ export class RegUserSelector implements IRegUserSelector {
             }
         }
     }
-
+    create(userDTO: RegUserType): IRegUser {
+        // Необходима валидация входящих данных!
+        return new RegUser(userDTO)
+    }
     private regUserSaveDTOValidator(DTO: RegUserType): ValidatorReportType {
         let requiredFields: (keyof RegUserType)[] = ['login', 'password', 'id', 'hash', 'statistic']
         for (let value of requiredFields) {

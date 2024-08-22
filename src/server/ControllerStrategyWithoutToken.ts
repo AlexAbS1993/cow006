@@ -1,4 +1,5 @@
 import { expectedParsedDataType, messageFromClientTypes, registrationUserType, usersType } from "../../types";
+import { IRegUserSelector } from "../Entities/RegistratedUser/interface";
 import { logInAction } from "./actions/logInAction";
 import { registrationAction } from "./actions/registrationAction";
 import { IWebSocketMessageController } from "./interface";
@@ -9,9 +10,9 @@ export class ControllerStrategyWithoutToken implements IWebSocketMessageControll
     private secretKey: string
     private webSocket: ws
     private wsId: string
-    private registrationUsers: registrationUserType
+    private registrationUsers: IRegUserSelector
     private users: usersType
-    constructor(data: expectedParsedDataType, secretKey: string, webSocket: ws, wsId: string, registrationUsers: registrationUserType, users: usersType) {
+    constructor(data: expectedParsedDataType, secretKey: string, webSocket: ws, wsId: string, registrationUsers: IRegUserSelector, users: usersType) {
         this.messageData = data
         this.secretKey = secretKey
         this.webSocket = webSocket

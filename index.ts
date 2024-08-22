@@ -14,9 +14,28 @@ import { IUser } from "./src/server/entities/user/interface"
 import { playersDataForResponseFromServerDataType, webSocketProcedureReportType } from "./src/Adds/Reports/webSocketReport.type"
 import { webSocketReportMessagesLibrary } from "./src/Adds/Reports/webSocketResponseMessage"
 import http from 'http'
+import MongoDBnoSQL, { modelsNameEnum } from "./src/Database/initialization"
+import RegUserMongo from "./src/Database/RegUserMongo"
+import { RegUserSelector } from "./src/Entities/RegistratedUser/RegUserSelector"
 
+const path = 'mongodb://AlexAbS:199304@alexabscluster-shard-00-00.qd0fz.mongodb.net:27017,alexabscluster-shard-00-01.qd0fz.mongodb.net:27017,alexabscluster-shard-00-02.qd0fz.mongodb.net:27017/cow006?ssl=true&replicaSet=atlas-y3z80j-shard-0&authSource=admin&retryWrites=true&w=majority&appName=AlexAbSCluster'
 const app = express()
 app.use(cors())
+// db connection 
+const db:MongoDBnoSQL = new MongoDBnoSQL()
+db.initialize();
+(async () => {
+    await db.connect(path)
+    const admin = {
+        login: 'Alex',
+        password: "199304",
+        hash: '1sag12',
+        id: '1'
+    }
+    await db.mongoose.models[modelsNameEnum.RegUser].create(admin)
+})();
+const regUserDB = new RegUserMongo(db)
+//---------------
 const server = http.createServer(app);
 const webSocketServer = new ws.WebSocketServer({ server })
 const clients: clientsType = {}
@@ -24,11 +43,11 @@ const rooms: roomsType = {}
 const users: usersType = {}
 const gamesParties: gamesPartiesType = {}
 const games:gamesType = {}
-const registrationUsers: registrationUserType = {}
+// const registrationUsers: registrationUserType = {}
 const secretkey = 'verysecretkey'
+const registrationUsersV2 = new RegUserSelector(regUserDB)
 
-
-webSocketServer.on('connection', (webSocket) => {
+webSocketServer.on('connection', async (webSocket) => {
     // Случайная строка для айди веб-сокета
     let idWS = uuid()
     // Добавляем в клиенты
@@ -49,9 +68,21 @@ webSocketServer.on('connection', (webSocket) => {
         }
         // При отправке сообщения необходимо крепить токен
         const token = parsedData.token
+        let regUser
+        let regUserStatus
+        try{
+            let request = await registrationUsersV2.getRegUser(token)
+            regUser = request.data
+            regUserStatus = request.success
+        }
+         catch(e: any){
+            // Необходимо создать новый отчёт по непредвиденным ошибкам
+            throw new Error(e.message)
+         }
         if(parsedData.type === messageFromClientTypes.iAmInAlready){
-            if (registrationUsers[token]){
-                let user = users[registrationUsers[token].id]
+            // if (registrationUsers[token]){
+            if (regUserStatus){
+                let user = users[regUser!.getId()]
                 let inRoomId = user.getRoomId()
                 let roomInformation = null
                 if (inRoomId){
@@ -90,19 +121,20 @@ webSocketServer.on('connection', (webSocket) => {
         }
         const messageController = new WebSocketMessageController()
         if (!token) {
-            messageController.defineStrategy(new ControllerStrategyWithoutToken(parsedData, secretkey, webSocket, idWS, registrationUsers, users))
+            messageController.defineStrategy(new ControllerStrategyWithoutToken(parsedData, secretkey, webSocket, idWS, registrationUsersV2, users))
             messageController.execute()
             return
         }
         else {
-            if (!registrationUsers[token]) {
+            // if (!registrationUsers[token]) {
+            if (regUserStatus) {
                 messageController.defineStrategy(new ControllerWrongTokenStrategy(webSocket))
                 messageController.execute()
                 return
             }
         }
         // Если токен рабочий, то пользователь получает свой id
-        id = registrationUsers[token].id
+        id = regUser!.getId()
         // Если пользователя еще нет среди игроков, то создается его пустой профиль
         // if (!users[id]) {
         //     users[id] = new User(id, id)
