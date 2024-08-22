@@ -15,7 +15,8 @@ const regUserDTOmock: RegUserType = {
         matches: 0,
         wins: 0,
         looses: 0
-    }
+    },
+    status: 'player'
 }
 
 jest.mock("../../Database/initialization")
