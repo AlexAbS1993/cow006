@@ -28,7 +28,8 @@ import { IDBModel } from "./interface";
             password: candidate.password,
             hash: candidate.hash,
             id: candidate.id,
-            statistic: candidate.statistic
+            statistic: candidate.statistic,
+            status: candidate.status
         }
     }
     private async getByFieldDocument<ValueType>(field: string, value: ValueType): Promise<(Document<unknown, {}, RegUserType> & RegUserType & {
@@ -43,13 +44,19 @@ import { IDBModel } from "./interface";
     }
     async save(data: RegUserType): Promise<void> {
         let candidate = await this.getByFieldDocument('id', data.id)
-        candidate.schema.paths
-        candidate.login = data.login
-        candidate.password = data.password
-        candidate.hash = data.hash
-        candidate.id = data.id
-        candidate.statistic = data.statistic
-        await candidate.save()
+        if (candidate === null){
+            await new this.model(data).save()
+            return
+        }
+        else {
+            candidate.login = data.login
+            candidate.password = data.password
+            candidate.hash = data.hash
+            candidate.id = data.id
+            candidate.statistic = data.statistic
+            await candidate.save()
+            return
+        }
     }
     async update(data: RegUserType): Promise<void> {
         throw new Error("Method not implemented.");

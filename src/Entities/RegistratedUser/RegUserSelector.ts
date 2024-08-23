@@ -33,7 +33,8 @@ export class RegUserSelector implements IRegUserSelector {
             password: user.getAuth().password,
             id: user.getId(),
             hash: user.getHash(),
-            statistic: user.getStatistic()
+            statistic: user.getStatistic(),
+            status: user.getStatus()
         }
         let dtoValidator = this.regUserSaveDTOValidator(regUserDTO)
         if (!dtoValidator.success) {
@@ -53,6 +54,7 @@ export class RegUserSelector implements IRegUserSelector {
             }
         }
         catch (e: any) {
+            console.log(e.message)
             return {
                 success: false,
                 message: reportMessagesLibrary.db.notCreated,
@@ -62,7 +64,10 @@ export class RegUserSelector implements IRegUserSelector {
         }
     }
     create(userDTO: RegUserType): IRegUser {
-        // Необходима валидация входящих данных!
+        let dtoValidator = this.regUserSaveDTOValidator(userDTO)
+        if (!dtoValidator.success) {
+           throw new Error(dtoValidator.message)
+        }
         return new RegUser(userDTO)
     }
     private regUserSaveDTOValidator(DTO: RegUserType): ValidatorReportType {

@@ -15,6 +15,7 @@ class MongoDBnoSQL {
     async connect(path: string){
         try{
             await this.mongoose.connect(path)
+            console.log("Database has connected")
             return true
         }
         catch(e: any){
@@ -50,6 +51,10 @@ class MongoDBnoSQL {
                     looses: 0,
                     matches: 0
                 }
+            },
+            status: {
+                type: String,
+                default: "player"
             }
         })
         if (!this.mongoose.models[modelsNameEnum.RegUser]){

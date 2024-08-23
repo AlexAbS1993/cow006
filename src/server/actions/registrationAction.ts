@@ -1,5 +1,5 @@
 import { createHmac } from 'node:crypto';
-import { messageForSendFromServerEnum, registrateDataType, registrationUserType, usersType } from '../../../types';
+import { messageForSendFromServerEnum, registrateDataType, usersType } from '../../../types';
 import ws from 'ws'
 import { webSocketProcedureReportType } from '../../Adds/Reports/webSocketReport.type';
 import { webSocketReportMessagesLibrary } from '../../Adds/Reports/webSocketResponseMessage';
@@ -47,14 +47,26 @@ export async function registrationAction(parsedData: registrateDataType, users: 
                 looses: 0,
                 matches: 0
             },
-            hash
+            hash,
+            status:'player'
         })
-        await registrationUsers.saveRegUser(regUser)
+        let regResult = await registrationUsers.saveRegUser(regUser)
         users[wsId] = new User(wsId, login)
-        let report: webSocketProcedureReportType = {
-            success: true,
-            message: webSocketReportMessagesLibrary.successRegistred(),
-            type: messageForSendFromServerEnum.successRegistred
+        let {success, message} =  regResult
+        let report: webSocketProcedureReportType
+        if (success){
+            report = {
+                success: true,
+                message: webSocketReportMessagesLibrary.successRegistred(),
+                type: messageForSendFromServerEnum.successRegistred
+            }
+            webSocket.send(JSON.stringify(report))
+            return
+        }
+        report = {
+            success: false,
+            message,
+            type: messageForSendFromServerEnum.validationRegistrationError
         }
         webSocket.send(JSON.stringify(report))
     }

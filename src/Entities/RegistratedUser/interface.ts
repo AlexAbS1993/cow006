@@ -18,7 +18,8 @@ export type RegUserType = {
     password: string;
     hash: string;
     id: string;
-    statistic: gameStatistic
+    statistic: gameStatistic,
+    status: "admin"|"player"
 }
 
 export interface IRegUser {
@@ -27,6 +28,7 @@ export interface IRegUser {
     getStatistic(): gameStatistic
     updateStatistic(data: gameStatistic): procedureReportType<IRegUser>
     getAuth():AuthRegUserType
+    getStatus():"admin"|"player"
 }
 
 export interface IRegUserSelector {

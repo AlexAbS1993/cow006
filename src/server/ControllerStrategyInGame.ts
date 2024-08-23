@@ -1,4 +1,5 @@
 import { expectedParsedDataType, messageForSendFromServerEnum, messageFromClientTypes } from "../../types";
+import { DataBaseReportType } from "../Adds/Reports/dbReport.type";
 import { reportMessagesLibrary } from "../Adds/Reports/reportMessages";
 import { cardFromPoolToRowPlacedSuccessfully, playersHandsType, playersIdFromServerDataType, playersMakeTurnDataTypeResonseFromServer, switchToCheckMessageFromServerPoolDataType, webSocketProcedureReportType } from "../Adds/Reports/webSocketReport.type";
 import {playersHandsForResponseDataCreator } from "../Adds/Reports/webSocketResponseDataCreators/playersHandsForResoinseData";
@@ -9,6 +10,7 @@ import { IGame } from "../Entities/Game/interface";
 import { IgameParty } from "../Entities/GameParty/interface";
 import { Iplayer } from "../Entities/Player/interface";
 import { poolCellType } from "../Entities/Pool/interface";
+import { IRegUser, IRegUserSelector } from "../Entities/RegistratedUser/interface";
 import { GameStates } from "../consts/rules";
 import { playerMakesTurn } from "./actions/playerMakesTurnAction";
 import { IUser } from "./entities/user/interface";
@@ -18,16 +20,14 @@ export class ControllerStrategyInGame implements IWebSocketMessageController{
     messageData: expectedParsedDataType
     private room: IUser[]
     private gp: IgameParty
-    private currentUser: IUser
-    private currentPlayer: Iplayer
     private currentGame: IGame
-    constructor(data: expectedParsedDataType, room: IUser[], gp: IgameParty, currentUser: IUser, currentPlayer: Iplayer, currentGame: IGame){
+    private regUsers: IRegUserSelector
+    constructor(data: expectedParsedDataType, room: IUser[], gp: IgameParty, currentGame: IGame, regUsers: IRegUserSelector){
         this.messageData = data
         this.room = room
         this.gp = gp
-        this.currentPlayer = currentPlayer
-        this.currentUser = currentUser
         this.currentGame = currentGame
+        this.regUsers = regUsers
     }
     execute(): void {
         switch (this.messageData.type){
@@ -208,14 +208,62 @@ export class ControllerStrategyInGame implements IWebSocketMessageController{
                 break
             }
             case messageFromClientTypes.getEndGameResults: {
+                let endGameResult = this.currentGame.getEndsResult()
                 let report =  {
                     success: true,
-                    data: this.currentGame.getEndsResult(),
+                    data: endGameResult,
                     type: messageForSendFromServerEnum.endGameReady
                 }
                 this.room.forEach(user => {
                     user.getWS()!.send(JSON.stringify(report))
+                    let id = user.getId()
+                    try{
+                       this.regUsers.getRegUser(id, 'id')
+                       .then((regUser: DataBaseReportType<IRegUser|null>) => {
+                        let {success, data} = regUser
+                        if(!success){
+                            throw new Error('Нет такого пользователя. Как он мог участвовать в игре?')
+                        }
+                        let wins = data!.getStatistic().wins
+                        let looses = data!.getStatistic().looses
+                        for (let key in endGameResult){
+                            if (endGameResult[key].id === id){
+                                if (endGameResult[key].winner){
+                                    wins+=1
+                                }
+                                else {
+                                    looses+=1
+                                }
+                            }
+                        }
+                        let resultOfUpdate = data!.updateStatistic({
+                            matches: data!.getStatistic().matches + 1,
+                            looses,
+                            wins,
+                        })
+                        if (resultOfUpdate.success){
+                            this.regUsers.saveRegUser(data as IRegUser)
+                        }
+                        else {
+                            let report = {
+                                success: false,
+                                type: messageForSendFromServerEnum.StatisticValidatorError,
+                                message: resultOfUpdate.message
+                            }
+                            user.getWS()!.send(JSON.stringify(report))
+                        }
+                       })                           
+                    }
+                    catch(e:any){
+                        let report = {
+                            success: false,
+                            type: messageForSendFromServerEnum.StatisticDoesntSave,
+                            message: e.message
+                        }
+                        user.getWS()!.send(JSON.stringify(report))
+                    }
                 })
+                
                 break
             }
             default: {

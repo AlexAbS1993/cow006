@@ -46,7 +46,9 @@ export enum messageForSendFromServerEnum {
     "cardNotExist" = "cardNotExist",
     "switchToProcess" = "switchToProcess",
      "iAmInAlready" =  "iAmInAlready",
-     "GameEndsPlayerLeaves" =  "GameEndsPlayerLeaves" 
+     "GameEndsPlayerLeaves" =  "GameEndsPlayerLeaves",
+     "StatisticDoesntSave" = "StatisticDoesntSave",
+     "StatisticValidatorError" = "StatisticValidatorError" 
 }
 
 export enum messageFromClientTypes {

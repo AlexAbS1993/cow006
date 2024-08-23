@@ -6,12 +6,13 @@ import { AuthRegUserType, gameStatistic, IRegUser, RegUserType } from "./interfa
 
 export class RegUser implements IRegUser{
     constructor(regUserDTO: RegUserType){
-        let {login, password, hash, id, statistic: {wins, looses, matches}} = regUserDTO
+        let {login, password, hash, id, statistic: {wins, looses, matches}, status} = regUserDTO
         this.login = login
         this.password = password
         this.hash = hash
         this.statistic = {wins, looses, matches}
         this.id = id
+        this.status = status
     }
     getAuth(): AuthRegUserType {
         return {
@@ -52,6 +53,9 @@ export class RegUser implements IRegUser{
             instance: this
         }
     }
+    getStatus(): "admin" | "player" {
+        return this.status
+    }
     private statisticFieldValidate(data: gameStatistic): ValidatorReportType{
         let requiredFields: (keyof typeof this.statistic)[] = Object.keys(this.statistic) as (keyof typeof this.statistic)[]
         for (let field of requiredFields){
@@ -90,4 +94,5 @@ export class RegUser implements IRegUser{
     private hash: string;
     private id: string;
     private statistic: gameStatistic;
+    private status: "admin"|"player"
 }

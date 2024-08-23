@@ -24,16 +24,17 @@ app.use(cors())
 // db connection 
 const db:MongoDBnoSQL = new MongoDBnoSQL()
 db.initialize();
-(async () => {
-    await db.connect(path)
-    const admin = {
-        login: 'Alex',
-        password: "199304",
-        hash: '1sag12',
-        id: '1'
-    }
-    await db.mongoose.models[modelsNameEnum.RegUser].create(admin)
-})();
+db.connect(path)
+// (async () => {
+//     
+//     const admin = {
+//         login: 'Alex',
+//         password: "199304",
+//         hash: '1sag12',
+//         id: '1'
+//     }
+//     await db.mongoose.models[modelsNameEnum.RegUser].create(admin)
+// })();
 const regUserDB = new RegUserMongo(db)
 //---------------
 const server = http.createServer(app);
@@ -76,7 +77,7 @@ webSocketServer.on('connection', async (webSocket) => {
             regUserStatus = request.success
         }
          catch(e: any){
-            // Необходимо создать новый отчёт по непредвиденным ошибкам
+        //     // Необходимо создать новый отчёт по непредвиденным ошибкам
             throw new Error(e.message)
          }
         if(parsedData.type === messageFromClientTypes.iAmInAlready){
@@ -156,7 +157,7 @@ webSocketServer.on('connection', async (webSocket) => {
                 }
             }
             let currentGame = games[users[id].getGameId() as string]
-            messageController.defineStrategy(new ControllerStrategyInGame(parsedData, rooms[currentRoom], gamesParties[currentRoom], users[id], currentPlayer as Iplayer, currentGame))
+            messageController.defineStrategy(new ControllerStrategyInGame(parsedData, rooms[currentRoom], gamesParties[currentRoom],currentGame, registrationUsersV2))
             messageController.execute()
             return
         }
